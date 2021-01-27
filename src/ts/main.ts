@@ -31,15 +31,14 @@ class Main {
      *                  This is meant to allow for the application to run in parallel with itself.
      */
     public validateArgs():void {
-        // format commandline argument to ensure consistent values are passed
-        let arg:string = this.args[2].toLowerCase().replace('-', '');
-
         // strict setting to ensure one command line arugment is sent
         if(this.argsLength > 3) {
             console.log("Error: Too many arguments. Only input 1 argument.");
         } else if(this.argsLength < 3) {
             console.log("Error: Too few arguments. Only input 1 argument.");
         } else {
+            // format commandline argument to ensure consistent values are passed
+            let arg:string = this.args[2].toLowerCase().replace('-', '');
             // filter only valid argument is entered
             switch (arg) {
                 // any previous case will not have "break; 
