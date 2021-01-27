@@ -1,11 +1,22 @@
+/**
+ * Filename:        crawlRental
+ * Description:     Class web crawls rental web applications
+ *                  through asynchronous calls.
+ *                   
+ */
+// web crawling library
 import * as puppeteer from 'puppeteer';
-const rentalConfig = require("../json/rentalConfig.json");
-const browserConfig = require("../json/browserConfig.json");
-const Padmapper = require('./target/padmapper');
+// get information for properties of available rental web applications
+const rentalConfig = require("../../json/rentalConfig.json");
+// web crawling configuration information
+const browserConfig = require("../../json/browserConfig.json");
 
 class CrawlRental {
+    // command line argument representing the target rental web application
     private target:string;
+    // URL for the target
     private targetURL:string;
+    // browser for web crawling
     private browser:any;
 
     constructor(arg:string) {
@@ -35,6 +46,9 @@ class CrawlRental {
     }
 
     private async webCrawl_p(browser:any, targetURL:string) {
+        // get Class for padmapper web crawling
+        const Padmapper = require('./target/padmapper');
+
         let pObject = rentalConfig[this.target].rental_type;
         let padmapper:any = new Padmapper(browser, targetURL, pObject);
         await padmapper.search();

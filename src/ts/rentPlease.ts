@@ -7,7 +7,7 @@
  */
 
  // Web crawling class
-const CrawlRental = require('./crawlRental');
+const CrawlRental = require('./webcrawl/crawlRental');
 
 export class RentPlease {
     // holds the crawlRental class to webcrawl rental web applications
