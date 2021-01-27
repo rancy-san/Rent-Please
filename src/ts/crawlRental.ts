@@ -5,6 +5,8 @@ const Padmapper = require('./target/padmapper');
 
 class CrawlRental {
     private target:string;
+    private targetURL:string;
+    private browser:any;
 
     constructor(arg:string) {
         this.target = arg;
@@ -13,17 +15,14 @@ class CrawlRental {
 
     public crawl():void {
         (async () => {
-
-            let targetURL:string = await this.getTargetURL(this.target);
-            let browser:any = await puppeteer.launch({
+            this.targetURL = await this.getTargetURL(this.target);
+            this.browser = await puppeteer.launch({
                 headless: browserConfig["headless"],
                 width: browserConfig["width"] ,
 		        height: browserConfig["height"]
             });
 
             await this.execTargetFunc(this.target);
-            
-
         })();
     }
 
@@ -35,9 +34,9 @@ class CrawlRental {
         eval("this."+rentalConfig[target].crawl_function);
     }
 
-    public async webCrawl_p() {
+    private async webCrawl_p(browser:any, targetURL:string) {
         let padmapper:any = new Padmapper
-        await padmapper.search();
+        await padmapper.search(browser, targetURL);
     }
 
 }
