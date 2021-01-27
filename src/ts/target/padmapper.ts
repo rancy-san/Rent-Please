@@ -1,10 +1,15 @@
-import * as puppeteer from 'puppeteer';
 const AbstractTarget = require('./target');
 
 class Padmapper extends AbstractTarget {
-    public async search(browser:any, targetURL:string) {
-        let [targetPage]:any = await browser.pages();
-        await targetPage.goto(targetURL);
+    private browser:any;
+    private targetURL:string;
+    private rentalType:object;
+
+    public async search() {
+        
+        let [targetPage]:any = await this.browser.pages();
+        await targetPage.goto(this.targetURL);
+        
     }
 }
 
