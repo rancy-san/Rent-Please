@@ -1,6 +1,6 @@
 {
     "p": {
-        "target_URL": "https://www.paddmapper.com/apartments",
-        "crawl_function": "webCrawl_p();"
+        "target_URL": "https://www.padmapper.com/apartments",
+        "crawl_function": "webCrawl_p(this.browser, this.targetURL);"
     }
 }
