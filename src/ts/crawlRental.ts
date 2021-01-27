@@ -1,10 +1,10 @@
 import * as puppeteer from 'puppeteer';
-const rentalReference = require("../json/rentalReference.json");
+const rentalConfig = require("../json/rentalConfig.json");
+const browserConfig = require("../json/browserConfig.json");
 const Padmapper = require('./target/padmapper');
 
 class CrawlRental {
     private target:string;
-    private browser:any;
 
     constructor(arg:string) {
         this.target = arg;
@@ -14,7 +14,13 @@ class CrawlRental {
     public crawl():void {
         (async () => {
 
-            let targetURL = await this.getTargetURL(this.target);
+            let targetURL:string = await this.getTargetURL(this.target);
+            let browser:any = await puppeteer.launch({
+                headless: browserConfig["headless"],
+                width: browserConfig["width"] ,
+		        height: browserConfig["height"]
+            });
+
             await this.execTargetFunc(this.target);
             
 
@@ -22,11 +28,11 @@ class CrawlRental {
     }
 
     private async getTargetURL(target:string) {
-        return rentalReference[target].targetURL;
+        return rentalConfig[target].target_URL;
     }
 
     private async execTargetFunc(target:string) {
-        eval("this."+rentalReference[target].crawlFunction);
+        eval("this."+rentalConfig[target].crawl_function);
     }
 
     public async webCrawl_p() {
