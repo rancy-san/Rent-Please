@@ -35,8 +35,9 @@ class CrawlRental {
     }
 
     private async webCrawl_p(browser:any, targetURL:string) {
-        let padmapper:any = new Padmapper
-        await padmapper.search(browser, targetURL);
+        let pObject = rentalConfig[this.target].rental_type;
+        let padmapper:any = new Padmapper(browser, targetURL, pObject);
+        await padmapper.search();
     }
 
 }
