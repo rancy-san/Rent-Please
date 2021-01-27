@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -47,17 +48,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractTarget = require('./target');
 var Padmapper = /** @class */ (function (_super) {
     __extends(Padmapper, _super);
     function Padmapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Padmapper.prototype.search = function () {
+    Padmapper.prototype.search = function (browser, targetURL) {
         return __awaiter(this, void 0, void 0, function () {
+            var targetPage;
             return __generator(this, function (_a) {
-                console.log("OK");
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, browser.pages()];
+                    case 1:
+                        targetPage = (_a.sent())[0];
+                        return [4 /*yield*/, targetPage.goto(targetURL)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
             });
         });
     };
