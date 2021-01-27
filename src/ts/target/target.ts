@@ -1,8 +1,16 @@
 abstract class Target {
 
-    constructor(){}
+    private browser:any;
+    private targetURL:string;
+    private rentalType:object;
 
-    public async search(){}
+    constructor(browser:any, targetURL:string, rentalType:object){
+        this.browser = browser;
+        this.targetURL = targetURL;
+        this.rentalType = rentalType;
+    }
+
+    public async search(any){};
 
 }
 
