@@ -36,7 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rentalReference = require("../json/rentalReference.json");
+var puppeteer = require("puppeteer");
+var rentalConfig = require("../json/rentalConfig.json");
+var browserConfig = require("../json/browserConfig.json");
 var Padmapper = require('./target/padmapper');
 var CrawlRental = /** @class */ (function () {
     function CrawlRental(arg) {
@@ -45,14 +47,21 @@ var CrawlRental = /** @class */ (function () {
     CrawlRental.prototype.crawl = function () {
         var _this = this;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var targetURL;
+            var targetURL, browser;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getTargetURL(this.target)];
                     case 1:
                         targetURL = _a.sent();
-                        return [4 /*yield*/, this.execTargetFunc(this.target)];
+                        return [4 /*yield*/, puppeteer.launch({
+                                headless: browserConfig["headless"],
+                                width: browserConfig["width"],
+                                height: browserConfig["height"]
+                            })];
                     case 2:
+                        browser = _a.sent();
+                        return [4 /*yield*/, this.execTargetFunc(this.target)];
+                    case 3:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -62,14 +71,14 @@ var CrawlRental = /** @class */ (function () {
     CrawlRental.prototype.getTargetURL = function (target) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, rentalReference[target].targetURL];
+                return [2 /*return*/, rentalConfig[target].target_URL];
             });
         });
     };
     CrawlRental.prototype.execTargetFunc = function (target) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                eval("this." + rentalReference[target].crawlFunction);
+                eval("this." + rentalConfig[target].crawl_function);
                 return [2 /*return*/];
             });
         });
