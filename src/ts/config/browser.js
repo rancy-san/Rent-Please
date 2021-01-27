@@ -1,3 +1,0 @@
-{
-}
-//# sourceMappingURL=browser.js.map
