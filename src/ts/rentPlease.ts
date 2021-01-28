@@ -14,8 +14,8 @@ export class RentPlease {
     private crawlRental:any;
 
     /**
-     * Constructor description:     Instantiate classes for use in the Rent, Please! application.
-     * Parameter:                   arg:string, the processed argument character from the commandline.
+     * Description:     Instantiate classes for use in the Rent, Please! application.
+     * @param           {string} arg the processed argument character from the commandline.
      */
     constructor(arg:string){
         // instantiate web crawler to first obtain rental data pointing to the arg parameter
@@ -30,6 +30,7 @@ export class RentPlease {
      */
     public seekRental():void {
         this.crawlRental.crawl();
+        return;
     }
 
     private buildRentalNetwork():void {}
