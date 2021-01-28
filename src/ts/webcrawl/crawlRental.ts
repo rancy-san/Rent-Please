@@ -10,6 +10,8 @@ import * as puppeteer from 'puppeteer';
 const rentalConfig = require("../../json/rentalConfig.json");
 // web crawling configuration information
 const browserConfig = require("../../json/browserConfig.json");
+// list of regions to scan
+const districtList = require("../../json/district.json");
 
 class CrawlRental {
     // command line argument representing the target rental web application
@@ -29,8 +31,12 @@ class CrawlRental {
             this.targetURL = await this.getTargetURL(this.target);
             this.browser = await puppeteer.launch({
                 headless: browserConfig["headless"],
-                width: browserConfig["width"] ,
-		        height: browserConfig["height"]
+                defaultViewport: null,
+                args: [
+                    //'--start-maximized',
+                    "--start-fullscreen",
+                    '--window-size=' + browserConfig["width"] + ',' + browserConfig["height"]
+                ]
             });
 
             await this.execTargetFunc(this.target);
@@ -50,7 +56,7 @@ class CrawlRental {
         const Padmapper = require('./target/padmapper');
 
         let pObject = rentalConfig[this.target].rental_type;
-        let padmapper:any = new Padmapper(browser, targetURL, pObject);
+        let padmapper:any = new Padmapper(browser, targetURL, pObject, districtList);
         await padmapper.search();
     }
 
