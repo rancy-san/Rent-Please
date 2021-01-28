@@ -55,8 +55,9 @@ class CrawlRental {
         // get Class for padmapper web crawling
         const Padmapper = require('./target/padmapper');
 
-        let pObject = rentalConfig[this.target].rental_type;
-        let padmapper:any = new Padmapper(browser, targetURL, pObject, districtList);
+        let rentalType:object = rentalConfig[this.target].rental_type;
+        let selectorList:object = rentalConfig[this.target].selector;
+        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList);
         await padmapper.search();
     }
 
