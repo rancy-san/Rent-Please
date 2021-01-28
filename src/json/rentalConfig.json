@@ -8,6 +8,10 @@
                 "property_categories": "?property-categories=",
                 "exclude_airbnb": "&exclude-airbnb"
             }
+        },
+        "selector": {
+            "property_list": "list_listItemContainer",
+            "property_list_end": "list_noMoreResult"
         }
     }
 }
