@@ -4,12 +4,14 @@ abstract class Target {
     private targetURL:string;
     private rentalType:object;
     private districtList:object;
+    private selectorList:object;
 
-    constructor(browser:any, targetURL:string, rentalType:object, districtList:object){
+    constructor(browser:any, targetURL:string, rentalType:object, districtList:object, selectorList:object){
         this.browser = browser;
         this.targetURL = targetURL;
         this.rentalType = rentalType;
         this.districtList = districtList;
+        this.selectorList = selectorList;
     }
 
     public async search(){};
