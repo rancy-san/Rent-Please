@@ -11,7 +11,8 @@
         },
         "selector": {
             "property_list": "list_listItemContainer",
-            "property_list_end": "list_noMoreResult"
+            "property_list_end": "list_noMoreResult",
+            "map": "MainMap_map"
         }
     }
 }
