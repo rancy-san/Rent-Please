@@ -54,15 +54,18 @@ class Padmapper extends AbstractTarget {
         // for loop just for districts
         // go to target site
         tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[x] + parameterExcludeAirBnB;
-        await targetPage.goto(tempTargetURL);
+        await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
         // loop here
         // grab available rental data from list (make sure it is not map view), then go to next district (don't select building rental type yet so that data is specific to district)
-        if(!await this.checkMapType) {
+
+        this.getAllProperty(targetPage);
+        /*
+        if(!await this.checkMapType(targetPage)) {
             await this.checkEndOfPropertyList(targetPage);
         }
+        */
 
-
-        // [0].children[0].children.length
+        // 
 
         // new for-loop to get rental data from list for each building rental type (apartment, house, etc.), then go to the next district
         //}
@@ -96,7 +99,7 @@ class Padmapper extends AbstractTarget {
      */
     private async checkEndOfPropertyList(targetPage: any) {
         let endOfList: boolean;
-        let selector:string = '*[class^=\"' + this.selectorList['property_list_end'] + '\"]';
+        let selector:string = '*[class^=\"' + this.selectorList['property_end'] + '\"]';
         
         do {
             await targetPage.keyboard.press('End');
@@ -116,8 +119,35 @@ class Padmapper extends AbstractTarget {
         return endOfList;
     }
 
-    private async getProperty(targetPage: any) {
+    private async getAllProperty(targetPage: any) {
+        // use partial classname
+        let selectorProperty:string = '*[class^=\"' + this.selectorList['property'] + '\"]';
+        // get elements with partial classname
+        let property:HTMLElement[] = await targetPage.$$(selectorProperty);
+        let propertyLength:number = property.length;
         
+        //while(propertyLength--) {
+            let elementBackBtn:HTMLElement[];
+            let selectorBackBtn:string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
+
+            // wait for element to be available
+            await targetPage.waitForSelector(selectorProperty[0]);
+            // get single property details
+            await this.getSingleProperty(property[propertyLength-1]);
+
+            // wait for element to be available
+            await targetPage.waitForSelector(selectorBackBtn[0]);
+            // load element
+            elementBackBtn = await targetPage.$$(selectorBackBtn);
+            await elementBackBtn[0].click();
+
+            // repeat
+        //}
+    }
+
+    private async getSingleProperty(property:HTMLElement) {
+        
+        await property.click();
     }
 }
 
