@@ -14,7 +14,15 @@
             "property": "ListItemFull_noGutterRow",
             "property_end": "list_noMoreResult",
             "property_backBtn": "btn btn-outline btn-back BubbleDetail_btnBack",
-            "property_URL":""
+            "property_URL":"BubbleDetail_street",
+            "property_name":"BubbleDetail_street",
+            "property_summary":"SummaryTable_header",
+            "property_room":"Floorplan_floorplansContainer",
+            "property_room_type": "Floorplan_title",
+            "property_sqft": "Floorplan_sqft",
+            "property_bath": "Floorplan_bath",
+            "property_cost": "Floorplan_floorplanPrice"
+
         }
     }
 }
