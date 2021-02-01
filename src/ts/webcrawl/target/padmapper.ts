@@ -6,6 +6,7 @@ class Padmapper extends AbstractTarget {
     private rentalType: object;
     private districtList: object;
     private selectorList: object;
+    private rentalData: object;
 
     /**
      * Function Name:   search
@@ -19,6 +20,7 @@ class Padmapper extends AbstractTarget {
         let parameterPropertyCategories: string = this.rentalType['parameter'].property_categories;
         let parameterExcludeAirBnB: string = this.rentalType['parameter'].exclude_airbnb;
 
+        //console.log(this.rentalData);
 
         await this.firstPass(districtRegion, districtProvince, buildingData, buildingDataLength, parameterPropertyCategories, parameterExcludeAirBnB);
     }
@@ -55,10 +57,9 @@ class Padmapper extends AbstractTarget {
         // go to target site
         tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[x] + parameterExcludeAirBnB;
         await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
-        // loop here
-        // grab available rental data from list (make sure it is not map view), then go to next district (don't select building rental type yet so that data is specific to district)
+        
+        this.getAllPropertyURL(targetPage);
 
-        this.getAllProperty(targetPage);
         /*
         if(!await this.checkMapType(targetPage)) {
             await this.checkEndOfPropertyList(targetPage);
@@ -119,35 +120,119 @@ class Padmapper extends AbstractTarget {
         return endOfList;
     }
 
-    private async getAllProperty(targetPage: any) {
+    private async getAllPropertyURL(targetPage: any) {
         // use partial classname
-        let selectorProperty:string = '*[class^=\"' + this.selectorList['property'] + '\"]';
+        let selectorProperty:string = '*[class*=\"' + this.selectorList['property'] + '\"]';
         // get elements with partial classname
         let property:HTMLElement[] = await targetPage.$$(selectorProperty);
         let propertyLength:number = property.length;
         
-        //while(propertyLength--) {
+        //console.log(await property[0]);
+
+        
+        while(propertyLength--) {
+            
             let elementBackBtn:HTMLElement[];
             let selectorBackBtn:string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
 
             // wait for element to be available
-            await targetPage.waitForSelector(selectorProperty[0]);
+            await targetPage.waitForSelector(selectorProperty);
             // get single property details
-            await this.getSingleProperty(property[propertyLength-1]);
+            await this.getSinglePropertyURL(targetPage, property[propertyLength]);
 
             // wait for element to be available
             await targetPage.waitForSelector(selectorBackBtn[0]);
             // load element
             elementBackBtn = await targetPage.$$(selectorBackBtn);
+            // go back
             await elementBackBtn[0].click();
+            
 
             // repeat
-        //}
+        }
+        
+        
     }
 
-    private async getSingleProperty(property:HTMLElement) {
+    private async getSinglePropertyURL(targetPage:any, property:HTMLElement) {
         
         await property.click();
+        
+        console.log(await this.getPropertyURL(targetPage));
+
+    }
+
+    private async getPropertyURL(targetPage:any) {
+        let selector =  '*[class^=\"' + this.selectorList['property_URL'] + '\"]';
+        await targetPage.waitForSelector(selector);
+        return await targetPage.evaluate((selector) => {
+            try {
+                let tempURL = document.querySelectorAll(selector)[0].children[0].href;
+                return tempURL.substring(0,tempURL.indexOf("#back="));
+            } catch {
+                return "No URL";
+            }
+        }, selector);
+    }
+
+    private async getPropertyName(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+            try {
+                return document.querySelectorAll(this.selectorList['property_name'])[0].children[0].innerText;
+            } catch {
+                return "No data";
+            }
+        });
+    }
+
+    private async getPropertyAddress(subTargetPage:any) {
+        let selector = '*[class^=\"' + this.selectorList['property_summary'] + '\"]';
+        let tempRow:HTMLElement[] = await subTargetPage.$$(selector);
+
+        return await subTargetPage.evaluate((tempRow) => {
+            // row is data in the table
+            let tempRowLength = tempRow.length;
+
+            while(tempRowLength--) {
+                if(tempRow[tempRowLength].innerText == "Address") {
+                    return document.querySelectorAll(this.selectorList['property_summary'][tempRowLength].parentNode.innerText.replace("Address", "").replace("\n", "").trim());
+                    break;
+                }
+            }
+            return "No data";
+        }, tempRow);
+    }
+
+    private async getPropertyRoom(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+            let tempRoom = {};
+            let room = document.querySelectorAll(this.selectorList['property_room']);
+            let roomType;
+        });
+    }
+
+    private async getPropertyRoomType(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+
+        });
+    }
+    
+    private async getPropertySize(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+
+        });
+    }
+    
+    private async getPropertyBathCount(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+
+        });
+    }
+    
+    private async getPropertyCost(subTargetPage:any) {
+        return await subTargetPage.evaluate(() => {
+
+        });
     }
 }
 
