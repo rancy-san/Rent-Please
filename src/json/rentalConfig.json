@@ -11,7 +11,7 @@
         },
         "selector": {
             "map": "MainMap_map",
-            "property": "ListItemFull_noGutterRow",
+            "property": "ListItemFull_listItemFull",
             "property_end": "list_noMoreResult",
             "property_backBtn": "btn btn-outline btn-back BubbleDetail_btnBack",
             "property_URL":"BubbleDetail_street",
