@@ -1,4 +1,6 @@
 const AbstractTarget = require('./target');
+const Sys= require("../../tools/system");
+
 
 class Padmapper extends AbstractTarget {
     private browser: any;
@@ -19,8 +21,6 @@ class Padmapper extends AbstractTarget {
         let buildingDataLength: number = buildingData.length;
         let parameterPropertyCategories: string = this.rentalType['parameter'].property_categories;
         let parameterExcludeAirBnB: string = this.rentalType['parameter'].exclude_airbnb;
-
-        //console.log(this.rentalData);
 
         await this.firstPass(districtRegion, districtProvince, buildingData, buildingDataLength, parameterPropertyCategories, parameterExcludeAirBnB);
     }
@@ -43,33 +43,43 @@ class Padmapper extends AbstractTarget {
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string
     ) {
+        // number of districts to iterate over
         let districtRegionLength = districtRegion.length;
-        let paramDistrict = '/' + districtRegion[districtRegionLength - 1].trim().replace(' ', '-') + '-' + districtProvince;
-
-        paramDistrict = paramDistrict.toLowerCase();
-
-        let [targetPage]: any = await this.browser.pages();
+        // parameters for the targetURL
+        let paramDistrict:string;
+        // set first tab to variable
+        let [targetPage]: any =  await this.browser.pages();
+        // set URL from the global variable
         let tempTargetURL: string = this.targetURL;
+        // property URL as an array
+        let propertyURL:Promise<string[]>;
+        // number of property URLs
+        let propertyURLLength:number;
+        // temp data to only target apartments
         let x: number = 0;
-        
-        console.log(this.targetURL);
-        // for loop just for districts
-        // go to target site
-        tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[x] + parameterExcludeAirBnB;
-        await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
-        
-        this.getAllPropertyURL(targetPage);
 
-        /*
-        if(!await this.checkMapType(targetPage)) {
-            await this.checkEndOfPropertyList(targetPage);
+        while (districtRegionLength--) {
+            paramDistrict = '/' + districtRegion[districtRegionLength].trim().replace(' ', '-') + '-' + districtProvince;
+            paramDistrict = paramDistrict.toLowerCase();
+
+            // for loop just for districts
+            // go to target site
+            tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[x] + parameterExcludeAirBnB;
+
+            console.log("Working on region... " + districtRegion[districtRegionLength]);
+            await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
+
+            // get all URLs for the district
+            propertyURL = await this.getAllPropertyURL(targetPage);
+            propertyURLLength = (await propertyURL).length;
+
+            // cycle through URL and push data to JSON object
+            while (propertyURLLength--) {
+                this.rentalData[districtRegion[districtRegionLength]][propertyURL[propertyURLLength]] = {};
+            }
+            
+            console.log("\r\n");
         }
-        */
-
-        // 
-
-        // new for-loop to get rental data from list for each building rental type (apartment, house, etc.), then go to the next district
-        //}
     }
 
     private async secondPass() {
@@ -120,25 +130,26 @@ class Padmapper extends AbstractTarget {
         return endOfList;
     }
 
-    private async getAllPropertyURL(targetPage: any) {
+    private async getAllPropertyURL(targetPage: any): Promise<any> {
         // use partial classname
         let selectorProperty:string = '*[class*=\"' + this.selectorList['property'] + '\"]';
         // get elements with partial classname
         let property:HTMLElement[] = await targetPage.$$(selectorProperty);
         let propertyLength:number = property.length;
+        let propertyTotal:number = propertyLength;
+        let propertyURL:string[] = [];
         
-        //console.log(await property[0]);
+        let elementBackBtn:HTMLElement[];
+        let selectorBackBtn:string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
 
-        
+        let system = new Sys();
+
         while(propertyLength--) {
-            
-            let elementBackBtn:HTMLElement[];
-            let selectorBackBtn:string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
 
             // wait for element to be available
             await targetPage.waitForSelector(selectorProperty);
             // get single property details
-            await this.getSinglePropertyURL(targetPage, property[propertyLength]);
+            propertyURL.push(await this.getSinglePropertyURL(targetPage, property[propertyLength]));
 
             // wait for element to be available
             await targetPage.waitForSelector(selectorBackBtn[0]);
@@ -146,23 +157,21 @@ class Padmapper extends AbstractTarget {
             elementBackBtn = await targetPage.$$(selectorBackBtn);
             // go back
             await elementBackBtn[0].click();
-            
 
+            process.stdout.write("Scanning for rental properties ...  " + system.percentLoaded(propertyTotal, propertyLength, 0) + " %\033[0G");
+            
             // repeat
         }
         
-        
+        return propertyURL;
     }
 
     private async getSinglePropertyURL(targetPage:any, property:HTMLElement) {
-        
         await property.click();
-        
-        console.log(await this.getPropertyURL(targetPage));
-
+        return await this.getPropertyURL(targetPage);
     }
 
-    private async getPropertyURL(targetPage:any) {
+    private async getPropertyURL(targetPage:any): Promise<any> {
         let selector =  '*[class^=\"' + this.selectorList['property_URL'] + '\"]';
         await targetPage.waitForSelector(selector);
         return await targetPage.evaluate((selector) => {
@@ -170,7 +179,7 @@ class Padmapper extends AbstractTarget {
                 let tempURL = document.querySelectorAll(selector)[0].children[0].href;
                 return tempURL.substring(0,tempURL.indexOf("#back="));
             } catch {
-                return "No URL";
+                return "Missing URL";
             }
         }, selector);
     }
