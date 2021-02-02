@@ -1,5 +1,5 @@
 const AbstractTarget = require('./target');
-const Sys= require("../../tools/system");
+const Sys = require("../../tools/system");
 
 
 class Padmapper extends AbstractTarget {
@@ -43,43 +43,12 @@ class Padmapper extends AbstractTarget {
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string
     ) {
-        // number of districts to iterate over
-        let districtRegionLength = districtRegion.length;
-        // parameters for the targetURL
-        let paramDistrict:string;
-        // set first tab to variable
-        let [targetPage]: any =  await this.browser.pages();
-        // set URL from the global variable
-        let tempTargetURL: string = this.targetURL;
-        // property URL as an array
-        let propertyURL:Promise<string[]>;
-        // number of property URLs
-        let propertyURLLength:number;
-        // temp data to only target apartments
-        let x: number = 0;
 
-        while (districtRegionLength--) {
-            paramDistrict = '/' + districtRegion[districtRegionLength].trim().replace(' ', '-') + '-' + districtProvince;
-            paramDistrict = paramDistrict.toLowerCase();
+        let [targetPage]: any = await this.browser.pages();
 
-            // for loop just for districts
-            // go to target site
-            tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[x] + parameterExcludeAirBnB;
+        await this.basicPass(targetPage, districtRegion, districtProvince, buildingData, parameterPropertyCategories, buildingDataLength, parameterExcludeAirBnB, 1);
 
-            console.log("Working on region... " + districtRegion[districtRegionLength]);
-            await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
-
-            // get all URLs for the district
-            propertyURL = await this.getAllPropertyURL(targetPage);
-            propertyURLLength = (await propertyURL).length;
-
-            // cycle through URL and push data to JSON object
-            while (propertyURLLength--) {
-                this.rentalData[districtRegion[districtRegionLength]][propertyURL[propertyURLLength]] = {};
-            }
-            
-            console.log("\r\n");
-        }
+        
     }
 
     private async secondPass() {
@@ -87,9 +56,85 @@ class Padmapper extends AbstractTarget {
         // loop through districts but with map view to aggregate similar data
     }
 
-    private async checkMapType(targetPage:any) {
-        let selector:string = '*[class^=\"' + this.selectorList['map'] + '\"]';
-        let mapExists:boolean = await targetPage.evaluate((selector) => {
+    private async basicPass(
+        targetPage: any,
+        districtRegion: string[],
+        districtProvince: string,
+        buildingData: string[],
+        parameterPropertyCategories: string,
+        buildingDataLength: number,
+        parameterExcludeAirBnB: string,
+        passType: number
+    ) {
+        // number of districts to iterate over
+        let tempDistrictRegionLength = districtRegion.length;
+        // parameters for the targetURL
+        let paramDistrict: string;
+        // set first tab to variable
+        // set URL from the global variable
+        let tempTargetURL: string = this.targetURL;
+        // property URL as an array
+        let tempPropertyURL: Promise<string[]>;
+        // number of property URLs
+        let tempPropertyURLLength: number;
+        // number of buildings to iterate over
+        let tempBuildingDataLength:number;
+
+        // cycle through all districts
+        while (tempDistrictRegionLength--) {
+            paramDistrict = '/' + districtRegion[tempDistrictRegionLength].trim().replace(' ', '-') + '-' + districtProvince;
+            paramDistrict = paramDistrict.toLowerCase();
+            tempBuildingDataLength  = buildingDataLength;
+
+            console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
+
+            while (tempBuildingDataLength--) {
+                // go to target site
+                tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB;
+
+                await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
+
+                // Map must be turned on for 2nd pass data
+                if (!await this.checkMapType(targetPage)) {
+                    // show map only if there is no map and passType is 2
+                    if(passType === 2) {
+                        let selector: string = '*[class^=\"' + this.selectorList['map_button'] + '\"]';
+                        let elementBackBtn: HTMLElement[] = await targetPage.$$(selector);
+                        // go back
+                        await elementBackBtn[0].click();
+                    }
+                }
+
+                console.log("Building type: " + buildingData[tempBuildingDataLength]);    
+
+                // get all URLs for the district
+                tempPropertyURL = await this.getAllPropertyURL(targetPage);
+                tempPropertyURLLength = (await tempPropertyURL).length;
+
+                if (tempPropertyURLLength > 0) {
+                    // cycle through URL and push data to JSON object
+                    while (tempPropertyURLLength--) {
+                        if (!this.rentalData[districtRegion[tempDistrictRegionLength]].hasOwnProperty(tempPropertyURL[tempPropertyURLLength]))
+                            this.rentalData[districtRegion[tempDistrictRegionLength]][tempPropertyURL[tempPropertyURLLength]] = {};
+                    }
+                }
+                else
+                    console.log("No rental properties listed for this district.");
+
+                console.log("\r\n");
+            }
+
+            console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
+        }
+    }
+
+    private async getRentalPropertyData() {
+        // go in URL and get data
+    }
+
+    private async checkMapType(targetPage: any) {
+        let selector: string = '*[class^=\"' + this.selectorList['map'] + '\"]';
+        let mapExists: boolean = await targetPage.evaluate((selector) => {
             try {
                 if (document.querySelectorAll(selector).length)
                     return true;
@@ -110,8 +155,8 @@ class Padmapper extends AbstractTarget {
      */
     private async checkEndOfPropertyList(targetPage: any) {
         let endOfList: boolean;
-        let selector:string = '*[class^=\"' + this.selectorList['property_end'] + '\"]';
-        
+        let selector: string = '*[class^=\"' + this.selectorList['property_end'] + '\"]';
+
         do {
             await targetPage.keyboard.press('End');
             endOfList = await targetPage.evaluate((selector) => {
@@ -132,19 +177,19 @@ class Padmapper extends AbstractTarget {
 
     private async getAllPropertyURL(targetPage: any): Promise<any> {
         // use partial classname
-        let selectorProperty:string = '*[class*=\"' + this.selectorList['property'] + '\"]';
+        let selectorProperty: string = '*[class*=\"' + this.selectorList['property'] + '\"]';
         // get elements with partial classname
-        let property:HTMLElement[] = await targetPage.$$(selectorProperty);
-        let propertyLength:number = property.length;
-        let propertyTotal:number = propertyLength;
-        let propertyURL:string[] = [];
-        
-        let elementBackBtn:HTMLElement[];
-        let selectorBackBtn:string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
+        let property: HTMLElement[] = await targetPage.$$(selectorProperty);
+        let propertyLength: number = property.length;
+        let propertyTotal: number = propertyLength;
+        let propertyURL: string[] = [];
+
+        let elementBackBtn: HTMLElement[];
+        let selectorBackBtn: string = '*[class^=\"' + this.selectorList['property_backBtn'] + '\"]';
 
         let system = new Sys();
 
-        while(propertyLength--) {
+        while (propertyLength--) {
 
             // wait for element to be available
             await targetPage.waitForSelector(selectorProperty);
@@ -158,33 +203,33 @@ class Padmapper extends AbstractTarget {
             // go back
             await elementBackBtn[0].click();
 
-            process.stdout.write("Scanning for rental properties ...  " + system.percentLoaded(propertyTotal, propertyLength, 0) + " %\033[0G");
-            
+            process.stdout.write("Scanning for rental properties...  " + system.percentLoaded(propertyTotal, propertyLength, 0) + " %\033[0G");
+
             // repeat
         }
-        
+
         return propertyURL;
     }
 
-    private async getSinglePropertyURL(targetPage:any, property:HTMLElement) {
+    private async getSinglePropertyURL(targetPage: any, property: HTMLElement) {
         await property.click();
         return await this.getPropertyURL(targetPage);
     }
 
-    private async getPropertyURL(targetPage:any): Promise<any> {
-        let selector =  '*[class^=\"' + this.selectorList['property_URL'] + '\"]';
+    private async getPropertyURL(targetPage: any): Promise<any> {
+        let selector = '*[class^=\"' + this.selectorList['property_URL'] + '\"]';
         await targetPage.waitForSelector(selector);
         return await targetPage.evaluate((selector) => {
             try {
                 let tempURL = document.querySelectorAll(selector)[0].children[0].href;
-                return tempURL.substring(0,tempURL.indexOf("#back="));
+                return tempURL.substring(0, tempURL.indexOf("#back="));
             } catch {
                 return "Missing URL";
             }
         }, selector);
     }
 
-    private async getPropertyName(subTargetPage:any) {
+    private async getPropertyName(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
             try {
                 return document.querySelectorAll(this.selectorList['property_name'])[0].children[0].innerText;
@@ -194,16 +239,16 @@ class Padmapper extends AbstractTarget {
         });
     }
 
-    private async getPropertyAddress(subTargetPage:any) {
+    private async getPropertyAddress(subTargetPage: any) {
         let selector = '*[class^=\"' + this.selectorList['property_summary'] + '\"]';
-        let tempRow:HTMLElement[] = await subTargetPage.$$(selector);
+        let tempRow: HTMLElement[] = await subTargetPage.$$(selector);
 
         return await subTargetPage.evaluate((tempRow) => {
             // row is data in the table
             let tempRowLength = tempRow.length;
 
-            while(tempRowLength--) {
-                if(tempRow[tempRowLength].innerText == "Address") {
+            while (tempRowLength--) {
+                if (tempRow[tempRowLength].innerText == "Address") {
                     return document.querySelectorAll(this.selectorList['property_summary'][tempRowLength].parentNode.innerText.replace("Address", "").replace("\n", "").trim());
                     break;
                 }
@@ -212,7 +257,7 @@ class Padmapper extends AbstractTarget {
         }, tempRow);
     }
 
-    private async getPropertyRoom(subTargetPage:any) {
+    private async getPropertyRoom(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
             let tempRoom = {};
             let room = document.querySelectorAll(this.selectorList['property_room']);
@@ -220,25 +265,25 @@ class Padmapper extends AbstractTarget {
         });
     }
 
-    private async getPropertyRoomType(subTargetPage:any) {
+    private async getPropertyRoomType(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
 
         });
     }
-    
-    private async getPropertySize(subTargetPage:any) {
+
+    private async getPropertySize(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
 
         });
     }
-    
-    private async getPropertyBathCount(subTargetPage:any) {
+
+    private async getPropertyBathCount(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
 
         });
     }
-    
-    private async getPropertyCost(subTargetPage:any) {
+
+    private async getPropertyCost(subTargetPage: any) {
         return await subTargetPage.evaluate(() => {
 
         });
