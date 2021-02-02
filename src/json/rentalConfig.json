@@ -3,7 +3,7 @@
         "target_URL": "https://www.padmapper.com/apartments",
         "crawl_function": "webCrawl_p(this.browser, this.targetURL);",
         "rental_type": {
-            "building": ["apartment", "condo","house","room","other"],
+            "building": ["other","condo","house","room","apartment"],
             "parameter": {
                 "property_categories": "?property-categories=",
                 "exclude_airbnb": "&exclude-airbnb"
@@ -11,6 +11,7 @@
         },
         "selector": {
             "map": "MainMap_map",
+            "map_button": "city_guide_showMapContainer",
             "property": "ListItemFull_listItemFull",
             "property_end": "list_noMoreResult",
             "property_backBtn": "btn btn-outline btn-back BubbleDetail_btnBack",
