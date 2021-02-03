@@ -191,13 +191,16 @@ private async getRentalPropertyData(targetPage:any, districtRegion:object, tempD
     private async getPropertyDataBasicInformation(targetPage:any, propertyLength:number) {
         let basicInformation = {};
         // property name
-        basicInformation['building_name'] = await this.getPropertyName(targetPage);
+        basicInformation['building_name'] = await this.getPropertyName(targetPage, propertyLength);
         // property address
-        basicInformation['building_address'] = await this.getPropertyAddress(targetPage);
-        /*
+        basicInformation['building_address'] = await this.getPropertyAddress(targetPage, propertyLength);
+        // building postal code
+        basicInformation['building_postal_code'] = await this.getPropertyPostalCode(targetPage, propertyLength);
+        
         // store building type
         basicInformation['building_type'] = await this.getPropertyBuildingType(targetPage);
         // number of rooms
+        /*
         basicInformation['room'] = await this.getPropertyRoomType(targetPage);
         // rent price
         basicInformation['cost'] = await this.getPropertyCost(targetPage);
@@ -301,12 +304,12 @@ private async getRentalPropertyData(targetPage:any, districtRegion:object, tempD
     }
 */
 
-    private async getPropertyObjectKey(targetPage:any, key:string) {
+    private async getPropertyObjectKey(targetPage:any, key:string, propertyLength:number) {
         
-        return await targetPage.evaluate((key) => {
+        return await targetPage.evaluate((key,propertyLength) => {
             //@ts-ignore
-            return  __PRELOADED_STATE__["currentSearch"]["listables"]["listables"][0][key];
-        },key);
+            return  __PRELOADED_STATE__["currentSearch"]["listables"]["listables"][propertyLength][key];
+        },key,propertyLength);
     }
     private async getSinglePropertyURL(targetPage: any) {
         return await this.getPropertyURL(targetPage);
@@ -327,22 +330,26 @@ private async getRentalPropertyData(targetPage:any, districtRegion:object, tempD
     }
 
     
-    private async getPropertyName(targetPage: any) {
-        return await this.getPropertyObjectKey(targetPage, this.objectList['property_name']);
+    private async getPropertyName(targetPage: any, propertyLength:number) {
+        return await this.getPropertyObjectKey(targetPage, this.objectList['property_name'], propertyLength);
     }
     
-    private async getPropertyAddress(targetPage: any) {
-        return await this.getPropertyObjectKey(targetPage, this.objectList['property_address']);
+    private async getPropertyAddress(targetPage: any, propertyLength:number) {
+        return await this.getPropertyObjectKey(targetPage, this.objectList['property_address'], propertyLength);
+    }
+
+    private async getPropertyPostalCode(targetPage: any, propertyLength:number) {
+        return await this.getPropertyObjectKey(targetPage, this.objectList['property_postal_code'], propertyLength);
     }
 
     private async getPropertyBuildingType(targetPage:any) {
-        let buildingType:string =  targetPage.url();
+        let buildingType:string = targetPage.url();
         
         // remove junk strings, get building type
-        buildingType = buildingType.substring(buildingType.indexOf("property-categories#3D"), buildingType.length);
-        buildingType = buildingType.substring(0, buildingType.indexOf("%26exclude-airbnb"));
+        buildingType = buildingType.substring(buildingType.indexOf("property-categories="), buildingType.length);
+        buildingType = buildingType.substring(0, buildingType.indexOf("&exclude-airbnb"));
+        buildingType = buildingType.replace("property-categories=", "");
 
-        console.log("Building type: " + buildingType);
         return buildingType;
     }
 
