@@ -3,7 +3,13 @@
         "target_URL": "https://www.padmapper.com/apartments",
         "crawl_function": "webCrawl_p(this.browser, this.targetURL);",
         "rental_type": {
-            "building": ["other","condo","house","room","apartment"],
+            "building": [
+                "other",
+                "condo",
+                "house",
+                "room",
+                "apartment"
+            ],
             "parameter": {
                 "property_categories": "?property-categories=",
                 "exclude_airbnb": "&exclude-airbnb"
@@ -15,15 +21,19 @@
             "property": "ListItemFull_listItemFull",
             "property_end": "list_noMoreResult",
             "property_backBtn": "btn btn-outline btn-back BubbleDetail_btnBack",
-            "property_URL":"BubbleDetail_street",
-            "property_name":"BubbleDetail_street",
-            "property_summary":"SummaryTable_header",
-            "property_room":"Floorplan_floorplansContainer",
+            "property_URL": "BubbleDetail_street",
+            "property_name": "BubbleDetail_street",
+            "property_address": "title",
+            "property_room_container": "Floorplan_pFloorplanFull",
             "property_room_type": "Floorplan_title",
             "property_sqft": "Floorplan_sqft",
             "property_bath": "Floorplan_bath",
             "property_cost": "Floorplan_floorplanPrice"
-
+        },
+        "object": {
+            "property_name":"building_name",
+            "property_address":"address",
+            "property_postal_code":"zipcode"
         }
     }
 }

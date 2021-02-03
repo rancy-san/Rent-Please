@@ -34,7 +34,7 @@ class CrawlRental {
                 defaultViewport: null,
                 args: [
                     //'--start-maximized',
-                    "--start-fullscreen",
+                    //"--start-fullscreen",
                     '--window-size=' + browserConfig["width"] + ',' + browserConfig["height"]
                 ]
             });
@@ -57,6 +57,7 @@ class CrawlRental {
 
         let rentalType:object = rentalConfig[this.target].rental_type;
         let selectorList:object = rentalConfig[this.target].selector;
+        let objectList:object = rentalConfig[this.target].object;
         let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList);
         await padmapper.search();
     }
