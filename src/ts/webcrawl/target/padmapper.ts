@@ -192,12 +192,12 @@ class Padmapper extends AbstractTarget {
             await elementBackBtn[0].click();
         }
     }
-    
+
     private async getRentalPropertyDataObject(targetPage: any, propertyLength: number, rentalPropertyWrapperLength: number, rentalPropertyRoomContainer: HTMLElement) {
         let rentalProperty: object = {};
         rentalProperty['basic_information'] = await this.getPropertyDataBasicInformation(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer);
-        //rentalProperty['apartment_amenities'] = await this.getPropertyDataApartmentAmenitites(targetPage);
-        //rentalProperty['building_amenities'] = await this.getPropertyDataBuildingAmentities(targetPage);
+        rentalProperty['apartment_amenities'] = await this.getPropertyDataApartmentAmenitites(targetPage, propertyLength);
+        rentalProperty['building_amenities'] = await this.getPropertyDataBuildingAmenities(targetPage, propertyLength);
 
         return rentalProperty;
     }
@@ -221,19 +221,37 @@ class Padmapper extends AbstractTarget {
         basicInformation['sqft'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
         // number of bathroom
         basicInformation['bathroom'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
-        
+
 
         return basicInformation;
     }
-    private async getPropertyDataApartmentAmenitites(targetPage: any) {
-        let apartmentAmenities = {};
 
-        return apartmentAmenities;
+    private async getPropertyDataApartmentAmenitites(targetPage: any, propertyLength: number) {
+        let apartmentAmenity: string[];
+        try {
+            apartmentAmenity = await this.getPropertyObjectKey(targetPage, this.objectList['apartment_amenity'], propertyLength);
+            if (apartmentAmenity === null || apartmentAmenity.length < 1) {
+                return [];
+            }
+            else
+                return apartmentAmenity;
+        } catch {
+            return [];
+        }
     }
-    private async getPropertyDataBuildingAmenities(targetPage: any) {
-        let buildingAmenities = {};
 
-        return buildingAmenities;
+    private async getPropertyDataBuildingAmenities(targetPage: any, propertyLength:number) {
+        let buildingAmenity: string[];
+        try {
+            buildingAmenity = await this.getPropertyObjectKey(targetPage, this.objectList['building_amenity'], propertyLength);
+            if(buildingAmenity === null || buildingAmenity.length < 1) {
+                return [];
+            }
+             else
+                return buildingAmenity;
+        } catch {
+            return [];
+        }
     }
 
     private async checkMapType(targetPage: any) {
@@ -307,15 +325,27 @@ class Padmapper extends AbstractTarget {
 
 
     private async getPropertyName(targetPage: any, propertyLength: number) {
-        return await this.getPropertyObjectKey(targetPage, this.objectList['property_name'], propertyLength);
+        try {
+            return await this.getPropertyObjectKey(targetPage, this.objectList['property_name'], propertyLength);
+        } catch {
+            return "No property name.";
+        }
     }
 
     private async getPropertyAddress(targetPage: any, propertyLength: number) {
-        return await this.getPropertyObjectKey(targetPage, this.objectList['property_address'], propertyLength);
+        try {
+            return await this.getPropertyObjectKey(targetPage, this.objectList['property_address'], propertyLength);
+        } catch {
+            return "No property address.";
+        }
     }
 
     private async getPropertyPostalCode(targetPage: any, propertyLength: number) {
-        return await this.getPropertyObjectKey(targetPage, this.objectList['property_postal_code'], propertyLength);
+        try {
+            return await this.getPropertyObjectKey(targetPage, this.objectList['property_postal_code'], propertyLength);
+        } catch {
+            return "No property postal code.";
+        }
     }
 
     private async getPropertyBuildingType(targetPage: any) {
@@ -331,34 +361,50 @@ class Padmapper extends AbstractTarget {
 
     private async getPropertyRoomType(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
         let selector: string = '*[class*=\"' + this.selectorList['property_room_type'] + '\"]';
+        try {
+            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            }, rentalPropertyRoomContainer, selector);
 
-        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
-        }, rentalPropertyRoomContainer, selector);
+        } catch {
+            return "No property room type.";
+        }
     }
 
-    private async getPropertySize(targetPage: any, rentalPropertyRoomContainer:HTMLElement) {
+    private async getPropertySize(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
         let selector: string = '*[class*=\"' + this.selectorList['property_sqft'] + '\"]';
 
-        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
-        }, rentalPropertyRoomContainer, selector);
+        try {
+            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            }, rentalPropertyRoomContainer, selector);
+        } catch {
+            return "No property size.";
+        }
     }
 
-    private async getPropertyBathCount(targetPage: any, rentalPropertyRoomContainer:HTMLElement) {
+    private async getPropertyBathCount(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
         let selector: string = '*[class*=\"' + this.selectorList['property_bath'] + '\"]';
 
-        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
-        }, rentalPropertyRoomContainer, selector);
+        try {
+            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            }, rentalPropertyRoomContainer, selector);
+        } catch {
+            return "No property bath count.";
+        }
     }
 
     private async getPropertyCost(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
         let selector: string = '*[class*=\"' + this.selectorList['property_cost'] + '\"]';
 
-        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
-        }, rentalPropertyRoomContainer, selector);
+        try {
+            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            }, rentalPropertyRoomContainer, selector);
+        } catch {
+            return "No property cost.";
+        }
     }
 
 }
