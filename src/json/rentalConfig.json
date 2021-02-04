@@ -32,7 +32,9 @@
         "object": {
             "property_name":"building_name",
             "property_address":"address",
-            "property_postal_code":"zipcode"
+            "property_postal_code":"zipcode",
+            "apartment_amenity": "amenity_tags",
+            "building_amenity": "building_amenity_tags"
         }
     }
 }
