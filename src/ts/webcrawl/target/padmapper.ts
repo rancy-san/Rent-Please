@@ -105,23 +105,6 @@ class Padmapper extends AbstractTarget {
                 console.log("Building type: " + buildingData[tempBuildingDataLength]);
                 await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
 
-                /*
-                // get all URLs for the district
-                tempPropertyURL = await this.getAllPropertyURL(targetPage);
-                tempPropertyURLLength = (await tempPropertyURL).length;
-
-                // if district has property, add to the list
-                if (tempPropertyURLLength > 0) {
-                    // cycle through URL and push data to JSON object
-                    while (tempPropertyURLLength--) {
-                        if (!this.rentalData[districtRegion[tempDistrictRegionLength]].hasOwnProperty(tempPropertyURL[tempPropertyURLLength]))
-                            this.rentalData[districtRegion[tempDistrictRegionLength]][tempPropertyURL[tempPropertyURLLength]] = { "property": [] };
-                    }
-                }
-                else
-                    console.log("No rental properties listed for this district.");
-
-                */
                 console.log("\r\n");
             }
 
@@ -169,8 +152,6 @@ class Padmapper extends AbstractTarget {
                     return document.querySelectorAll(selectorPropertyRoomContainerCheck)[rentalPropertyWrapperLength].innerText;
                 }, selectorPropertyRoomContainerCheck, rentalPropertyWrapperLength);
 
-                console.log(rentalPropertyWrapperLength);
-                console.log(rentalPropertyRoomContainerCheck);
                 if (rentalPropertyRoomContainerCheck.toLowerCase() != "unavailable") {
 
                     let rentalPropertyRoomContainer: HTMLElement[];
@@ -211,27 +192,7 @@ class Padmapper extends AbstractTarget {
             await elementBackBtn[0].click();
         }
     }
-    /*
-        private async getRentalPropertyData(targetPage:any, districtRegion:string[], districtProvince:string) {
-            // go in URL and get data
-            let tempDistrictRegionLength:number = districtRegion.length;
-            let paramDistrict:string;
     
-            // cycle through districts
-            while(tempDistrictRegionLength--) {
-                let districtURLLength:number = Object.keys(this.rentalData[districtRegion[tempDistrictRegionLength]]).length;
-    
-                // cycle through URLs in object
-                while(districtURLLength--) {
-                    let tempTargetURL:string =  Object.keys(this.rentalData[districtRegion[tempDistrictRegionLength]])[districtURLLength];
-                   
-                    await targetPage.goto(tempTargetURL, {waituntil: 'networkidle2'});
-                    this.rentalData[districtRegion[tempDistrictRegionLength]][districtURLLength]['property'].push(this.getRentalPropertyDataObject(targetPage));
-                }
-            }
-           // return this.getRentalPropertyDataObject();
-        }
-    */
     private async getRentalPropertyDataObject(targetPage: any, propertyLength: number, rentalPropertyWrapperLength: number, rentalPropertyRoomContainer: HTMLElement) {
         let rentalProperty: object = {};
         rentalProperty['basic_information'] = await this.getPropertyDataBasicInformation(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer);
@@ -254,15 +215,13 @@ class Padmapper extends AbstractTarget {
 
         // number of rooms
         basicInformation['room'] = await this.getPropertyRoomType(targetPage, rentalPropertyRoomContainer);
-
         // rent price
         basicInformation['cost'] = await this.getPropertyCost(targetPage, rentalPropertyRoomContainer);
-        /*
         // size of suite
-        basicInformation['sqft'] = await this.getPropertySize(targetPage);
+        basicInformation['sqft'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
         // number of bathroom
-        basicInformation['bathroom'] = await this.getPropertyBathCount(targetPage);
-        */
+        basicInformation['bathroom'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
+        
 
         return basicInformation;
     }
@@ -320,43 +279,6 @@ class Padmapper extends AbstractTarget {
 
         return endOfList;
     }
-    /*
-        private async getAllPropertyURL(targetPage: any): Promise<any> {
-            // use partial classname
-            let selectorProperty: string = '*[class*=\"' + this.selectorList['property'] + '\"]';
-            // get elements with partial classname
-            let property: HTMLElement[] = await targetPage.$$(selectorProperty);
-            let propertyLength: number = property.length;
-            let propertyTotal: number = propertyLength;
-            let propertyURL: string[] = [];
-    
-            let elementBackBtn: HTMLElement[];
-            let selectorBackBtn: string = '*[class*=\"' + this.selectorList['property_backBtn'] + '\"]';
-    
-            let system = new Sys();
-    
-            while (propertyLength--) {
-    
-                // wait for element to be available
-                await targetPage.waitForSelector(selectorProperty);
-                // get single property details
-                propertyURL.push(await this.getSinglePropertyURL(targetPage, property[propertyLength]));
-    
-                // wait for element to be available
-                await targetPage.waitForSelector(selectorBackBtn[0]);
-                // load element
-                elementBackBtn = await targetPage.$$(selectorBackBtn);
-                // go back
-                await elementBackBtn[0].click();
-    
-                process.stdout.write("Scanning for rental properties...  " + system.percentLoaded(propertyTotal, propertyLength, 0) + " %\033[0G");
-    
-                // repeat
-            }
-    
-            return propertyURL;
-        }
-    */
 
     private async getPropertyObjectKey(targetPage: any, key: string, propertyLength: number) {
 
@@ -415,10 +337,20 @@ class Padmapper extends AbstractTarget {
         }, rentalPropertyRoomContainer, selector);
     }
 
-    private async getPropertySize(targetPage: any) {
+    private async getPropertySize(targetPage: any, rentalPropertyRoomContainer:HTMLElement) {
+        let selector: string = '*[class*=\"' + this.selectorList['property_sqft'] + '\"]';
+
+        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+        }, rentalPropertyRoomContainer, selector);
     }
 
-    private async getPropertyBathCount(targetPage: any) {
+    private async getPropertyBathCount(targetPage: any, rentalPropertyRoomContainer:HTMLElement) {
+        let selector: string = '*[class*=\"' + this.selectorList['property_bath'] + '\"]';
+
+        return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+            return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+        }, rentalPropertyRoomContainer, selector);
     }
 
     private async getPropertyCost(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
