@@ -6,15 +6,17 @@ abstract class Target {
     private districtList:object;
     private selectorList:object;
     private objectList:object;
+    private attributeList:object;
     private rentalData: object;
 
-    constructor(browser:any, targetURL:string, rentalType:object, districtList:object, selectorList:object, objectList:object){
+    constructor(browser:any, targetURL:string, rentalType:object, districtList:object, selectorList:object, objectList:object, attributeList:object){
         this.browser = browser;
         this.targetURL = targetURL;
         this.rentalType = rentalType;
         this.districtList = districtList;
         this.selectorList = selectorList;
         this.objectList = objectList;
+        this.attributeList = attributeList;
         this.rentalData = {};
         this.populateRentalData();
     }
