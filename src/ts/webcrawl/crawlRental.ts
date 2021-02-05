@@ -58,7 +58,8 @@ class CrawlRental {
         let rentalType:object = rentalConfig[this.target].rental_type;
         let selectorList:object = rentalConfig[this.target].selector;
         let objectList:object = rentalConfig[this.target].object;
-        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList);
+        let attributeList:object = rentalConfig[this.target].attribute;
+        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList, attributeList);
         await padmapper.search();
     }
 
