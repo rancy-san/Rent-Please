@@ -17,7 +17,7 @@ class Padmapper extends AbstractTarget {
      */
     public async search() {
         let districtRegion: string[] = this.districtList['region'];
-        let districtProvince: string = this.districtList['province'];
+        let districtProvince: string[] = this.districtList['province'];
         let buildingData: string[] = this.rentalType['building'];
         let parameterPropertyCategories: string = this.rentalType['parameter'].property_categories;
         let parameterExcludeAirBnB: string = this.rentalType['parameter'].exclude_airbnb;
@@ -36,7 +36,7 @@ class Padmapper extends AbstractTarget {
      */
     private async firstPass(
         districtRegion: string[],
-        districtProvince: string,
+        districtProvince: string[],
         buildingData: string[],
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string
@@ -53,14 +53,15 @@ class Padmapper extends AbstractTarget {
     private async basicPass(
         targetPage: any,
         districtRegion: string[],
-        districtProvince: string,
+        districtProvince: string[],
         buildingData: string[],
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string,
         passType: number
     ) {
+        let tempDistrictProvinceLength:number = districtProvince.length;
         // number of districts to iterate over
-        let tempDistrictRegionLength = districtRegion.length;
+        let tempDistrictRegionLength:number;
         // parameters for the targetURL
         let paramDistrict: string;
         // set URL from the global variable
@@ -72,40 +73,44 @@ class Padmapper extends AbstractTarget {
         // number of buildings to iterate over
         let tempBuildingDataLength: number;
 
-        // cycle through all districts
-        while (tempDistrictRegionLength--) {
-            paramDistrict = '/' + districtRegion[tempDistrictRegionLength].trim().replace(' ', '-') + '-' + districtProvince;
-            paramDistrict = paramDistrict.toLowerCase();
-            tempBuildingDataLength = buildingData.length;
+        // cycle through province
+        while (tempDistrictProvinceLength--) {
+            tempDistrictRegionLength = districtRegion.length;
+            // cycle through all districts
+            while (tempDistrictRegionLength--) {
+                paramDistrict = '/' + districtRegion[tempDistrictRegionLength].trim().replace(' ', '-') + '-' + districtProvince[tempDistrictProvinceLength];
+                paramDistrict = paramDistrict.toLowerCase();
+                tempBuildingDataLength = buildingData.length;
 
-            console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
+                console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
 
-            while (tempBuildingDataLength--) {
-                // go to target site
-                tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB;
+                while (tempBuildingDataLength--) {
+                    // go to target site
+                    tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB;
 
-                await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
+                    await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
 
-                await this.checkEndOfPropertyList(targetPage);
+                    await this.checkEndOfPropertyList(targetPage);
 
-                // Map must be turned on for 2nd pass data
-                if (!await this.checkMapType(targetPage)) {
-                    // show map only if there is no map and passType is 2
-                    if (passType === 2) {
-                        let selector: string = '*[class*=\"' + this.selectorList['map_button'] + '\"]';
-                        let elementMapBtn: HTMLElement[] = await targetPage.$$(selector);
-                        // go back
-                        await elementMapBtn[0].click();
+                    // Map must be turned on for 2nd pass data
+                    if (!await this.checkMapType(targetPage)) {
+                        // show map only if there is no map and passType is 2
+                        if (passType === 2) {
+                            let selector: string = '*[class*=\"' + this.selectorList['map_button'] + '\"]';
+                            let elementMapBtn: HTMLElement[] = await targetPage.$$(selector);
+                            // go back
+                            await elementMapBtn[0].click();
+                        }
                     }
+
+                    console.log("Building type: " + buildingData[tempBuildingDataLength]);
+                    await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
+
+                    console.log("\r\n");
                 }
 
-                console.log("Building type: " + buildingData[tempBuildingDataLength]);
-                await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
-
-                console.log("\r\n");
+                console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
             }
-
-            console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
         }
     }
 

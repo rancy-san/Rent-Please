@@ -1,5 +1,5 @@
 {
-    "province": "BC",
+    "province": ["BC"],
     "region": [
         "Central Saanich",
         "Colwood",
