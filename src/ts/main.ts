@@ -49,6 +49,11 @@ class Main {
                     rentPlease.seekRental();                   
                     break;
                 }
+                // update list of neighbourhoods
+                case "-un": {
+                    let rentPlease:any = new RentPlease();
+                    rentPlease.updateNeighbourhoodList();
+                }
                 default: {
                     console.log("Error: Argument '" + this.args[2] + "' does not exist.");
                 }
