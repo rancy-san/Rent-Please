@@ -13,11 +13,13 @@ export class RentPlease {
     // holds the crawlRental class to webcrawl rental web applications
     private crawlRental:any;
 
+    constructor()
+    constructor(arg:string)
     /**
      * Description:     Instantiate classes for use in the Rent, Please! application.
      * @param           {string} arg the processed argument character from the commandline.
      */
-    constructor(arg:string){
+    constructor(arg?:string){
         // instantiate web crawler to first obtain rental data pointing to the arg parameter
        this.crawlRental = new CrawlRental(arg);
     }
@@ -31,6 +33,10 @@ export class RentPlease {
     public seekRental():void {
         this.crawlRental.crawl();
         return;
+    }
+
+    public updateNeighbourhoodList() {
+
     }
 
     private buildRentalNetwork():void {}
