@@ -5,3 +5,4 @@ Rent, Please! is a Node.js tool that obtains and analyzes popular property renta
 ## Setup
 #### Puppeteer `$ npm install puppeteer`
 #### Excel4Node `$ npm install excel4node`
+#### Redis `$ npm install redis`
