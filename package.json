@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "excel4node": "^1.7.2",
-    "lodash": "^4.17.20",
     "node-wikipedia": "^0.0.2",
     "puppeteer": "^5.5.0",
     "redis": "^3.0.2"
