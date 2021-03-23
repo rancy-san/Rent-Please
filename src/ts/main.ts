@@ -50,9 +50,11 @@ class Main {
                     break;
                 }
                 // update list of neighbourhoods
-                case "-un": {
+                case "u": {
                     let rentPlease:any = new RentPlease();
-                    rentPlease.updateNeighbourhoodList();
+                    // start collecting available neighbourhood data
+                    rentPlease.updateDistrictList();
+                    break;
                 }
                 default: {
                     console.log("Error: Argument '" + this.args[2] + "' does not exist.");
