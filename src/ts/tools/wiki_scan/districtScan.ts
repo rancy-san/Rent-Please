@@ -10,6 +10,7 @@
 const Wikipedia = require('node-wikipedia');
 // list of province names and codes
 const ProvinceList = require('../../../json/provinceList');
+const fs = require('fs');
 
 class DistrictScan {
     // list of district information collected from Wikipedia
@@ -40,7 +41,8 @@ class DistrictScan {
         this.searchTermSecondary = [
             this.searchTermPrimary,
             "Communities in ",
-            "Communities in the "
+            "Communities in the ",
+            "List of neighbourhoods in"
         ];
         this.provinceNameKey = "province_name";
         this.provinceCodeKey = "province_code";
@@ -85,23 +87,32 @@ class DistrictScan {
             // initialize each province with empty object
             this.district[this.provinceName[provinceNameLength]] = {};
             // any results will be a subcategory leading to more subcategories or pages of districts
-            this.searchBySubcategory(category);
+            this.district[this.provinceName[provinceNameLength]] = await this.searchBySubcategory(category, provinceNameLength);
         }
+
+        
+        fs.writeFile('districtData.txt', JSON.stringify(this.district, null, 4), function(err){
+            console.log("DONE.");
+        });
+        
     }
 
     /**
      * Function Name:   searchBySubcategory
      * Description:     Recursive function performs deeper search of subcateogries within 
      *                  subcatogeries until a page for a district is found.
-     * @param           {object} category the JSON data for the category/subcategory 
+     * @param           {object} category the Wikipedia JSON data for the category/subcategory 
+     *                  {number} provinceNameLength the index of the province targeted
      *                  used to perform a deeper search 
      */
-    private async searchBySubcategory(category: object) {
-        //console.log(category);
+    private async searchBySubcategory(category: object, provinceNameLength: number) {
+        // store current object data in tempCategory
+        let tempCategoryData: object = {};
         // array of objects from the wiki response
         let subcategory: object[] = category[this.subcategoryKey];
         // store name of the subcategory element
         let subcategoryName: string = category[this.subcategoryNameKey];
+        let searchTermSecondaryLength = this.searchTermSecondary.length;
         // number of objects in the array
         let subcategoryLength: number;
 
@@ -115,35 +126,48 @@ class DistrictScan {
 
         // recursive loop if again another subcategory
         if (subcategoryLength > 0) {
+            tempCategoryData[subcategoryName] = [];
             // scan through subCategories
             while (subcategoryLength--) {
-                // recursive loop to perform another category search within the JSON data structure
-                await this.searchBySubcategory(subcategory[subcategoryLength]);
+               
+                // recursive loop to perform another category search within the JSON data structure, and append data to array for the key in the object
+                tempCategoryData[subcategoryName].push(await this.searchBySubcategory(subcategory[subcategoryLength], provinceNameLength));
             }
+            // reutnr subcategory on finish data collection
+            return tempCategoryData;
+        } else {
+            tempCategoryData[subcategoryName] = null;
         }
+
         // search through existing pages that are not dependent of the existance of a recursive loop
         if (this.getPageLength(this.getPage(category)) > 0) {
             // determine number of filters
             let searchTermSecondaryLength = this.searchTermSecondary.length;
             // cycle through filters
             while (searchTermSecondaryLength--) {
+                
                 // accept pages only if the subcategory contains the correct text (ignore non-district data)
                 if (subcategoryName.indexOf(this.searchTermSecondary[searchTermSecondaryLength]) >= 0) {
+                    let tempSubcategoryName: string;
+                    tempSubcategoryName = subcategoryName.replace(this.searchTermSecondary[searchTermSecondaryLength], "").replace(this.provinceName[provinceNameLength],"").replace(",","").trim();
                     // enter the page JSON key
-                    this.searchByPage(category);
+                    tempCategoryData[subcategoryName] = await this.searchByPage(category, provinceNameLength, tempSubcategoryName);
+                   break;
                 }
             }
         }
+        return tempCategoryData;
     }
 
     /**
      * Function Name:   searchByPage
      * Description:     Scan through the page/s avaiable by using the category that the pages belong in.
      *                  Pages with acceptable filter will be considered.
-     * @param           {object} category the JSON data for the category/subcategory to access the page data
+     * @param           {object} category the Wikipedia JSON data for the category/subcategory to access the page data
      *                  used to perform a deeper search 
      */
-    private async searchByPage(category: object) {
+    private async searchByPage(category: object, provinceNameLength: number, tempSubcategoryName: string) {
+        let tempPageData: string[] = [];
         // page data from the subcategory/category
         let page: string[] = this.getPage(category);
         // number of pages
@@ -158,13 +182,15 @@ class DistrictScan {
                 // if the filter is match, exit and dont action on page value
                 if (page[pageLength].toLowerCase().indexOf(this.searchTermSecondary[searchTermSecondaryLength].toLowerCase()) >= 0) {
                     break;
-                } 
+                }
                 // if no matches were found, action on page value
                 else if (searchTermSecondaryLength === 0) {
-                    console.log(page[pageLength]);
+                    tempPageData.push(page[pageLength]);
+                    //this.district[this.provinceName[provinceNameLength]][tempSubcategoryName].push(page[pageLength]);
                 }
             }
         }
+        return tempPageData;
     }
     /**
      * Function Name:   getPage
