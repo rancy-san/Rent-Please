@@ -1,5 +1,5 @@
 const AbstractTarget = require('./target');
-const Sys = require("../../tools/system");
+const Sys = require("../../tools/system/system");
 
 
 class Padmapper extends AbstractTarget {
@@ -457,6 +457,10 @@ class Padmapper extends AbstractTarget {
         } catch {
             return "—";
         }
+    }
+
+    private async getSelector(selector) {
+        return '*[class*=\"' + selector + '\"]';
     }
 
 }
