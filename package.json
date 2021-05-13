@@ -4,7 +4,8 @@
     "node-wikipedia": "^0.0.2",
     "ol": "^6.5.0",
     "puppeteer": "^5.5.0",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "tsc": "^1.20150623.0"
   },
   "devDependencies": {
     "typescript": "^4.1.3"
