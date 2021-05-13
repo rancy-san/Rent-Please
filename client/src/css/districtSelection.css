@@ -1,0 +1,160 @@
+html,body {
+    margin: 0;
+    padding: 0;
+}
+#districtSelection {
+    height: 484.5937345px;
+    width: 1000px;
+}
+#searchContainer {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    width: 306px;
+    float: left;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#searchFieldContainer {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 30px;
+    padding-top: 10px;
+}
+#searchIcon {
+    position: absolute;
+    display: block;
+    height: 20px;
+    width: 20px;
+    margin: 5px;
+    margin-top: 7px;
+    right: 0;
+    background-image: url(../../img/search.png);
+    z-index: 1;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: brightness(0%) opacity(0.5);
+}
+#searchIcon:hover {
+    filter: brightness(110%);
+}
+#searchField {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: calc(100% - 60px);
+    padding-left: 20px;
+    padding-right: 40px;
+    border: none;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+}
+input:focus {
+    outline: none;
+}
+
+#resultWrapper {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: calc(100% - 50px);
+    margin-top: 10px;
+}
+
+.resultContainer {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100px;
+    border-bottom: 1px solid lightgray;
+}
+
+.resultNameContainer {
+    font-size: 17px;
+}
+
+.geolocateButtonContainer {
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+}
+
+.geoLocateIcon {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    background-image: url(../../img/geolocate.png);
+}
+
+#map {
+    position: relative;
+    display: inline-block;
+    height: 484.5937345px;
+    width: 674px;
+}
+
+.ol-uncollapsible {
+    display: none !important;
+}
+
+.ol-rotate {
+    display: none !important;
+}
+
+.ol-zoom {
+    position: absolute;
+    opacity: 0.9;
+    width: 30px;
+    height: 60px;
+    right: 10px;
+    bottom: 10px;
+}
+
+.ol-zoom-in,
+.ol-zoom-out {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 0px;
+    background-color: rgba(250,250,250,1);
+    border: none;
+    color: rgba(100,100,100,1);
+    font-family: Arial Black, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+.ol-zoom-in {
+    border-radius: 5px 5px 0 0;
+    border-bottom: 1px solid grey;
+}
+.ol-zoom-out {
+    border-radius: 0 0 5px 5px;
+}
+
+.ol-zoom-in:hover,
+.ol-zoom-out:hover {
+    color: black;
+    background-color: #FFF;
+}
+
+
+#zoomOutButton:hover,
+#zoomInButton:hover {
+    filter: brightness(110%);
+}
+
+.ol-zoom-in:active {
+   font-size: 20px;
+}
+
+.ol-zoom-out:active {
+   font-size: 10px; 
+}
+#zoomInButton:active {
+    margin-bottom: 10%;
+}
