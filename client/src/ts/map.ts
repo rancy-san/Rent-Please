@@ -62,6 +62,8 @@ window.onload = function () {
     let map:Mapping = new Mapping(longitude, latitude);
      // @ts-ignore
     let search:Searching = new Searching();
+    // @ts-ignore
+    let searchUI:SearchUI = new SearchUI();
 
     let mapZoomOutButton:Element;
     let mapZoomInButton:Element;
@@ -76,6 +78,6 @@ window.onload = function () {
 
     map.addEventGetLonLatOnMapMove();
 
-    search.searchDistrict();
+    search.searchDistrict(searchUI.getSearchTerm());
 
 }
