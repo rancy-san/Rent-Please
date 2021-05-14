@@ -1,3 +1,8 @@
+/*
+    Structure name: result
+    Description:    naming convention for JSON keys output by Geogratis
+                    4 keys because these will be the most important data
+*/
 interface result {
     title: string;
     bbox: number[];
@@ -5,72 +10,58 @@ interface result {
     coordinates: number[];
 }
 
+/*
+    Structure Name:     Searching
+    Description:        Fetch open source geolocation data (Geogratis)
+
+ */
+
 class Searching {
-    public createResultContainer(
-        districtName: string,
-        districtLat: number,
-        districtLon: number,
-        districtBBoxLon1: number,
-        districtBBoxLat1: number,
-        districtBBoxLon2: number,
-        districtBBoxLat2: number
-    ) {
 
-        // @ts-ignore
-        let resultWrapper:HTMLElement = document.getElementById("resultWrapper");
-        let resultContainer:HTMLElement = document.createElement("DIV");
-        let resultNameContainer:HTMLElement = document.createElement("DIV");
+    private geolocationURL: string;
 
-        let buttonContainer:HTMLElement = document.createElement("DIV");
-        let geolocateButtonContainer:HTMLElement = document.createElement("DIV");
-        let geoLocateIcon:HTMLElement = document.createElement("DIV");
-
-        resultContainer.className = "resultContainer";
-        resultNameContainer.className = "resultNameContainer";
-        geolocateButtonContainer.className = "geolocateButtonContainer";
-        geoLocateIcon.className = "geoLocateIcon";
-
-        resultNameContainer.innerText = districtName;
-
-        geolocateButtonContainer.appendChild(geoLocateIcon);
-
-        resultContainer.appendChild(resultNameContainer);
-        resultContainer.appendChild(geolocateButtonContainer);
-        resultWrapper.appendChild(resultContainer);
+    constructor() {
+        this.geolocationURL = "http://geogratis.gc.ca/services/geolocation/en/locate?q=";
     }
 
-    public searchDistrict() {
+    /**
+     * Structure Name:  searchDistrict
+     * Description:     fetch and return geolocation from Geogratis using user input data
+     */
+    public searchDistrict(searchTerm: string): void {
+        console.log("ok");
         let xhr: XMLHttpRequest = new XMLHttpRequest();
-        let searchField: any = document.getElementById("searchField");
-
         xhr.onreadystatechange = (() => this.handleCallback(xhr));
-        xhr.open("GET", ("http://geogratis.gc.ca/services/geolocation/en/locate?q=" + searchField.value), true);
+        xhr.open("GET", (this.geolocationURL + searchTerm), true);
         xhr.send();
     }
 
-    public handleCallback(xhr: XMLHttpRequest) {
+    public handleCallback(xhr: XMLHttpRequest): void {
         let searchData: result[];
         let searchDataLength: number;
+        // @ts-ignore
+        let searchUI: SearchUI;
 
         if (xhr.readyState == 4 && xhr.status == 200) {
             searchData = JSON.parse(xhr.responseText);
             searchDataLength = searchData.length;
 
-
-            for (let i: number = 0; i < searchDataLength; i++) {
-                this.createResultContainer(
-                    searchData[i].title,
-                    searchData[i].geometry.coordinates[0],
-                    searchData[i].geometry.coordinates[1],
-                    searchData[i].bbox[0],
-                    searchData[i].bbox[1],
-                    searchData[i].bbox[2],
-                    searchData[i].bbox[3]
-                );
+            if (searchDataLength > 0) {
+                // @ts-ignore
+                searchUI = new SearchUI();
+                for (let i: number = 0; i < searchDataLength; i++) {
+                    // the fetched data obtained should be stored somewhere instead of being used right away
+                    searchUI.createResultContainer(
+                        searchData[i].title,
+                        searchData[i].geometry.coordinates[0],
+                        searchData[i].geometry.coordinates[1],
+                        searchData[i].bbox[0],
+                        searchData[i].bbox[1],
+                        searchData[i].bbox[2],
+                        searchData[i].bbox[3]
+                    );
+                }
             }
-
-            //console.log(searchData);
-            //console.log(searchData[0].geometry.coordinates);
         }
     }
 }
