@@ -19,9 +19,13 @@ interface result {
 class Searching {
 
     private geolocationURL: string;
+    // @ts-ignore
+    private searchListUI: SearchListUI;
 
     constructor() {
         this.geolocationURL = "http://geogratis.gc.ca/services/geolocation/en/locate?q=";
+        // @ts-ignore
+        this.searchListUI = new SearchListUI();
     }
 
     /**
@@ -29,7 +33,6 @@ class Searching {
      * Description:     fetch and return geolocation from Geogratis using user input data
      */
     public searchDistrict(searchTerm: string): void {
-        console.log("ok");
         let xhr: XMLHttpRequest = new XMLHttpRequest();
         xhr.onreadystatechange = (() => this.handleCallback(xhr));
         xhr.open("GET", (this.geolocationURL + searchTerm), true);
@@ -39,19 +42,15 @@ class Searching {
     public handleCallback(xhr: XMLHttpRequest): void {
         let searchData: result[];
         let searchDataLength: number;
-        // @ts-ignore
-        let searchUI: SearchUI;
 
         if (xhr.readyState == 4 && xhr.status == 200) {
             searchData = JSON.parse(xhr.responseText);
             searchDataLength = searchData.length;
 
             if (searchDataLength > 0) {
-                // @ts-ignore
-                searchUI = new SearchUI();
                 for (let i: number = 0; i < searchDataLength; i++) {
                     // the fetched data obtained should be stored somewhere instead of being used right away
-                    searchUI.createResultContainer(
+                    this.searchListUI.createResultContainer(
                         searchData[i].title,
                         searchData[i].geometry.coordinates[0],
                         searchData[i].geometry.coordinates[1],

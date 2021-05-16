@@ -4,8 +4,9 @@ class Mapping {
     private zoomDefault: number;
     private zoomMin: number;
     private zoomMax: number;
-    private map:any;
-
+    private map: any;
+    private view: any;
+    
     constructor(longitute: number, latitude: number) {
         this.longitude = longitute;
         this.latitude = latitude;
@@ -16,17 +17,13 @@ class Mapping {
 
     }
 
-    public createMap():void {
+    public createMap(): void {
+        this.createView();
         // @ts-ignore
         this.map = new ol.Map({
             target: 'map',
             // @ts-ignore
-            view: new ol.View({
-                // @ts-ignore
-                center: ol.proj.fromLonLat([this.longitude, this.latitude]),
-                // const
-                zoom: this.zoomDefault
-            }),
+            view: this.view,
             layers: [
                 // @ts-ignore
                 new ol.layer.Tile({
@@ -36,48 +33,50 @@ class Mapping {
             ]
         });
     }
+    
+    private createView() {
+        // @ts-ignore
+        this.view = new ol.View({
+            // @ts-ignore
+            center: ol.proj.fromLonLat([this.longitude, this.latitude]),
+            // const
+            zoom: this.zoomDefault
+        });
+    }
 
-    public addEventGetLonLatOnMapMove():void {
+    public addEventGetLonLatOnMapMove(): void {
         this.map.on('moveend', this.getLonLatMap);
     }
 
-    private getLonLatMap(event:any):void {
-        
-            let map:any = event.map;
-            let view :any= map.getView();
-            let center:number = view.getCenter();
-            
-            // @ts-ignore
-            console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[0], map.getView().calculateExtent(map.getSize())[1]]));
-            
-            // @ts-ignore
-            console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[2], map.getView().calculateExtent(map.getSize())[3]]));
+    public mapLoaded(): boolean {
+        return this.map.once('postrender', function () {
+            return true;
+        });
     }
-}
 
-window.onload = function () {
-    let longitude:number = -123.380578361318935;
-    let latitude:number = 48.453718893086205;
+    private getLonLatMap(event: any): void {
+        let map:any = event.map;
 
-    let map:Mapping = new Mapping(longitude, latitude);
-     // @ts-ignore
-    let search:Searching = new Searching();
-    // @ts-ignore
-    let searchUI:SearchUI = new SearchUI();
+        let view: any = map.getView();
+        let center: number = view.getCenter();
 
-    let mapZoomOutButton:Element;
-    let mapZoomInButton:Element;
-    
-    map.createMap();
-    
-    mapZoomOutButton = document.getElementsByClassName("ol-zoom-out")[0];
-    mapZoomInButton = document.getElementsByClassName("ol-zoom-in")[0];
+        // @ts-ignore
+        console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[0], map.getView().calculateExtent(map.getSize())[1]]));
 
-    mapZoomOutButton.innerHTML = "<div id='zoomOutButton'>-</div>";
-    mapZoomInButton.innerHTML = "<div id='zoomInButton'>+</div>";
+        // @ts-ignore
+        console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[2], map.getView().calculateExtent(map.getSize())[3]]));
 
-    map.addEventGetLonLatOnMapMove();
 
-    search.searchDistrict(searchUI.getSearchTerm());
+        // this.getMapEvent();
+
+    }
+
+    public getView(): any {
+        return this.view;
+    }
+
+    public getMap(): any {
+        return this.map;
+    }
 
 }
