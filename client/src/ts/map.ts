@@ -11,7 +11,7 @@ class Mapping {
         this.longitude = longitute;
         this.latitude = latitude;
 
-        this.zoomDefault = 12;
+        this.zoomDefault = 13;
         this.zoomMin = 15;
         this.zoomMax = 12.2688228803426;
 
@@ -33,7 +33,7 @@ class Mapping {
             ]
         });
     }
-    
+
     private createView() {
         // @ts-ignore
         this.view = new ol.View({
@@ -60,14 +60,13 @@ class Mapping {
         let view: any = map.getView();
         let center: number = view.getCenter();
 
+        /*
         // @ts-ignore
         console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[0], map.getView().calculateExtent(map.getSize())[1]]));
 
         // @ts-ignore
         console.log(ol.proj.toLonLat([map.getView().calculateExtent(map.getSize())[2], map.getView().calculateExtent(map.getSize())[3]]));
-
-
-        // this.getMapEvent();
+*/
 
     }
 

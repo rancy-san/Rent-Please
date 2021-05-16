@@ -1,6 +1,6 @@
 window.onload = function () {
-    let longitude: number = -123.380578361318935;
-    let latitude: number = 48.453718893086205;
+    let longitude: number = -123.364722;
+    let latitude: number = 48.428333;
 
     // @ts-ignore
     let map: Mapping = new Mapping(longitude, latitude);
@@ -37,8 +37,9 @@ window.onload = function () {
 
         searchListUX.setMap(map.getMap());
         searchListUX.setView(map.getView());
+        searchListUX.initZoomDefault();
+        searchListUX.initLonlatDefault();
 
-        
         // @ts-ignore
         searchInputUI = new SearchInputUI(searchListUX);
 

@@ -9,7 +9,7 @@ class SearchListUI extends SearchUI {
         // @ts-ignore
         super();
         this.searchListUX = searchListUX;
-        
+
     }
 
     // GUI creation should be in its own class
@@ -32,7 +32,7 @@ class SearchListUI extends SearchUI {
         let geoLocateIcon: HTMLElement = this.createDIVButton("geoLocateIcon");
 
         resultNameContainer.innerText = districtName;
-        
+
         resultContainer.setAttribute("data-districtName", districtName);
         resultContainer.setAttribute("data-districtLat", districtLat.toString());
         resultContainer.setAttribute("data-districtLon", districtLon.toString());
@@ -45,6 +45,15 @@ class SearchListUI extends SearchUI {
         // @ts-ignore
         this.searchListUX.addEventAppendToPrepareData(addDistrictButtonContainer, resultContainer, this.prepareWrapper, this.resultWrapper);
         this.searchListUX.addEventUpdateLonLat(geolocateButtonContainer, districtLat, districtLon);
+
+        this.searchListUX.addEventUpdateBBox(
+            geolocateButtonContainer,
+            districtBBoxLon1,
+            districtBBoxLat1,
+            districtBBoxLon2,
+            districtBBoxLat2
+        );
+        
 
         // nest icons in its respective container
         addDistrictButtonContainer.appendChild(addDistrictIcon);

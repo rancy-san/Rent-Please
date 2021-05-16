@@ -6,7 +6,6 @@ class SearchUX {
     constructor() {
     }
 
-
     public setView(view: any) {
         this.view = view;
     }
