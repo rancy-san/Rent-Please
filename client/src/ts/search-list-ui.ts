@@ -16,11 +16,7 @@ class SearchListUI extends SearchUI {
     public createResultContainer(
         districtName: string,
         districtLat: number,
-        districtLon: number,
-        districtBBoxLon1: number,
-        districtBBoxLat1: number,
-        districtBBoxLon2: number,
-        districtBBoxLat2: number
+        districtLon: number
     ): void {
 
         let resultContainer: HTMLElement = this.createDIVButton("resultContainer");
@@ -36,16 +32,26 @@ class SearchListUI extends SearchUI {
         resultContainer.setAttribute("data-districtName", districtName);
         resultContainer.setAttribute("data-districtLat", districtLat.toString());
         resultContainer.setAttribute("data-districtLon", districtLon.toString());
-        resultContainer.setAttribute("data-districtBBoxLon1", districtBBoxLon1.toString());
-        resultContainer.setAttribute("data-districtBBoxLat1", districtBBoxLat1.toString());
-        resultContainer.setAttribute("data-districtBBoxLon2", districtBBoxLon2.toString());
-        resultContainer.setAttribute("data-districtBBoxLat2", districtBBoxLat2.toString());
 
         // add data to Prepare list event triggered
         // @ts-ignore
-        this.searchListUX.addEventAppendToPrepareData(addDistrictButtonContainer, resultContainer, this.prepareWrapper, this.resultWrapper);
-        this.searchListUX.addEventUpdateLonLat(geolocateButtonContainer, districtLat, districtLon);
+        this.searchListUX.addEventAppendToPrepareData(
+            addDistrictButtonContainer, 
+            resultContainer, 
+            this.prepareWrapper, 
+            this.resultWrapper,
+            districtLat,
+            districtLon
+        );
 
+        this.searchListUX.addEventUpdateLonLat(
+            geolocateButtonContainer, 
+            districtLat, 
+            districtLon
+        );
+
+        /*
+        
         this.searchListUX.addEventUpdateBBox(
             geolocateButtonContainer,
             districtBBoxLon1,
@@ -53,6 +59,8 @@ class SearchListUI extends SearchUI {
             districtBBoxLon2,
             districtBBoxLat2
         );
+
+        */
         
 
         // nest icons in its respective container

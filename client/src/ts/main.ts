@@ -37,7 +37,6 @@ window.onload = function () {
 
         searchListUX.setMap(map.getMap());
         searchListUX.setView(map.getView());
-        searchListUX.initZoomDefault();
         searchListUX.initLonlatDefault();
 
         // @ts-ignore

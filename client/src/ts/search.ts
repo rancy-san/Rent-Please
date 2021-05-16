@@ -56,11 +56,7 @@ class Searching {
                     this.searchListUI.createResultContainer(
                         searchData[i].title,
                         searchData[i].geometry.coordinates[0],
-                        searchData[i].geometry.coordinates[1],
-                        searchData[i].bbox[0],
-                        searchData[i].bbox[1],
-                        searchData[i].bbox[2],
-                        searchData[i].bbox[3]
+                        searchData[i].geometry.coordinates[1]
                     );
                 }
             }
