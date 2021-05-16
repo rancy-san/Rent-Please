@@ -15,8 +15,8 @@ class SearchListUX extends SearchUX {
     }
 
 
-    public addEventUpdateLonLat(buttonElement: HTMLElement): void {
-        buttonElement.addEventListener("click", () => this.updateLonLat());
+    public addEventUpdateLonLat(buttonElement: HTMLElement, longitude: number, latitude: number): void {
+        buttonElement.addEventListener("click", () => this.updateLonLat(longitude, latitude));
     }
     
     public appendToPrepareData(elementResult: HTMLElement, listElementData: HTMLElement, listElementResults: HTMLElement): void {
@@ -25,11 +25,13 @@ class SearchListUX extends SearchUX {
         this.clearList(listElementResults);
     }
     
-    private updateLonLat(): void {
+    private updateLonLat(longitude: number, latitude: number): void {
         // @ts-ignore
-        console.log(this.view);
+        console.log(this.getView());
+        console.log(this.map);
+        console.log(this.getMap());
         // @ts-ignore
-       //this.view.centerOn([-13734663.156961612, 6182672.176861948], this.map.getMap().getSize(), [674/2, 484/2]);
+        this.view.centerOn(ol.proj.fromLonLat([longitude, latitude]), this.map.getSize(), [674/2, 484/2]);
     }
 
     public addEventSwitchTab(

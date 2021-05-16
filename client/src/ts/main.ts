@@ -7,6 +7,8 @@ window.onload = function () {
     // @ts-ignore
     //let searchUI: SearchUI;
     // @ts-ignore
+    let searchUX: SearchUX;
+    // @ts-ignore
     let searchListUX: SearchListUX;
     // @ts-ignore
     let searchInputUI: SearchInputUI;
@@ -30,13 +32,15 @@ window.onload = function () {
         //searchUI = new SearchUI();
         // @ts-ignore
         searchListUX = new SearchListUX();
-        // @ts-ignore
-        searchInputUI = new SearchInputUI();
 
         //view = map.getView();
 
         searchListUX.setMap(map.getMap());
         searchListUX.setView(map.getView());
+
+        
+        // @ts-ignore
+        searchInputUI = new SearchInputUI(searchListUX);
 
         //view.centerOn([-13734663.156961612, 6182672.176861948], map.getMap().getSize(), [674/2, 484/2]);
         //searchUX.setMap(map.getView());

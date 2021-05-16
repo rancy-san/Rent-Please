@@ -3,6 +3,10 @@
     Description:    naming convention for JSON keys output by Geogratis
                     4 keys because these will be the most important data
 */
+
+///<reference path='search-list-ux.ts' />
+///<reference path='search-list-ui.ts' />
+
 interface result {
     title: string;
     bbox: number[];
@@ -19,13 +23,12 @@ interface result {
 class Searching {
 
     private geolocationURL: string;
-    // @ts-ignore
     private searchListUI: SearchListUI;
 
-    constructor() {
+    constructor(searchListUX: SearchListUX) {
         this.geolocationURL = "http://geogratis.gc.ca/services/geolocation/en/locate?q=";
         // @ts-ignore
-        this.searchListUI = new SearchListUI();
+        this.searchListUI = new SearchListUI(searchListUX);
     }
 
     /**

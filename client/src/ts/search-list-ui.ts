@@ -1,13 +1,14 @@
 ///<reference path='search-ui.ts' />
+///<reference path='search-list-ux.ts' />
 class SearchListUI extends SearchUI {
 
     // @ts-ignore
     private searchListUX: SearchListUX;
 
-    constructor() {
-        super();
+    constructor(searchListUX: SearchListUX) {
         // @ts-ignore
-        this.searchListUX = new SearchListUX();
+        super();
+        this.searchListUX = searchListUX;
         
     }
 
@@ -31,11 +32,19 @@ class SearchListUI extends SearchUI {
         let geoLocateIcon: HTMLElement = this.createDIVButton("geoLocateIcon");
 
         resultNameContainer.innerText = districtName;
+        
+        resultContainer.setAttribute("data-districtName", districtName);
+        resultContainer.setAttribute("data-districtLat", districtLat.toString());
+        resultContainer.setAttribute("data-districtLon", districtLon.toString());
+        resultContainer.setAttribute("data-districtBBoxLon1", districtBBoxLon1.toString());
+        resultContainer.setAttribute("data-districtBBoxLat1", districtBBoxLat1.toString());
+        resultContainer.setAttribute("data-districtBBoxLon2", districtBBoxLon2.toString());
+        resultContainer.setAttribute("data-districtBBoxLat2", districtBBoxLat2.toString());
 
         // add data to Prepare list event triggered
         // @ts-ignore
         this.searchListUX.addEventAppendToPrepareData(addDistrictButtonContainer, resultContainer, this.prepareWrapper, this.resultWrapper);
-        this.searchListUX.addEventUpdateLonLat(geolocateButtonContainer);
+        this.searchListUX.addEventUpdateLonLat(geolocateButtonContainer, districtLat, districtLon);
 
         // nest icons in its respective container
         addDistrictButtonContainer.appendChild(addDistrictIcon);
