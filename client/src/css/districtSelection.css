@@ -57,12 +57,50 @@ input:focus {
     outline: none;
 }
 
-#resultWrapper {
+#tabContainer {
     position: relative;
     display: block;
+    height: 30px;
     width: 100%;
-    height: calc(100% - 50px);
-    margin-top: 10px;
+    padding-top: 10px;
+}
+.tab {
+    position: relative;
+    display: inline-block;
+    width: calc(50% - 20px);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    border-radius: 25px 25px 0  0;
+    border: 1px solid lightgrey;
+    border-bottom: 0px solid rgba(0,0,0,0);
+}
+#tabSearchResults {
+    float: left;
+}
+#tabPrepareResults {
+    float: left;
+    margin-left: 10px;
+    background-color: #F3F3F3;
+    opacity: 0.45;
+}
+#resultWrapper {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: calc(100% - 90px);
+    bottom: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+#prepareWrapper {
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: calc(100% - 90px);
+    bottom: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .resultContainer {
@@ -77,18 +115,57 @@ input:focus {
     font-size: 17px;
 }
 
+.buttonContainer {
+    position: absolute;
+    display: relative;
+    width: 100%;
+    bottom: 10px;
+    right: 10px;
+}
+
+.addDistrictButtonContainer,
 .geolocateButtonContainer {
     position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    float: right;
+}
+.addDistrictButtonContainer:hover {
+    border-radius: 100%;
+    background-color: lightblue;
+}
+.geolocateButtonContainer:hover {
+    border-radius: 100%;
+    background-color: lightblue;
+}
+
+.addDistrictButtonContainer:hover .addDistrictIcon {
+    filter: hue-rotate(0deg) contrast(100%) saturate(1000%) brightness(90%);
+}
+.geolocateButtonContainer:hover .geoLocateIcon {
+    filter: hue-rotate(-200deg) contrast(100%) saturate(1000%) brightness(90%);
+}
+
+.addDistrictIcon,
+.geoLocateIcon {
+    position: absolute;
     display: block;
     width: 30px;
     height: 30px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
-
+.addDistrictIcon {
+    background-image: url(../../img/add.png);
+}
 .geoLocateIcon {
-    position: relative;
-    display: block;
-    height: 100%;
-    width: 100%;
     background-image: url(../../img/geolocate.png);
 }
 
