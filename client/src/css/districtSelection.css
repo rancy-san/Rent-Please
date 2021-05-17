@@ -2,6 +2,27 @@ html,body {
     margin: 0;
     padding: 0;
 }
+#mapZoomDisplayContainer {
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 30px;
+    bottom: 75px;
+    right: 10px;
+    background-color: rgba(255,255,255,0.85);
+    z-index: 1;
+}
+#mapZoomDisplay {
+    position: absolute;
+    display: block;
+    height: 10px;
+    width: 100%;
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    font-size: 10px;
+}
 #districtSelection {
     position: absolute;
     display: block;
@@ -132,6 +153,7 @@ input:focus {
 }
 
 .addDistrictButtonContainer,
+.removeDistrictButtonContainer,
 .geolocateButtonContainer {
     position: relative;
     display: inline-block;
@@ -139,7 +161,17 @@ input:focus {
     height: 40px;
     float: right;
 }
+
+.removeDistrictButtonContainer {
+    display: none;
+}
+
 .addDistrictButtonContainer:hover {
+    border-radius: 100%;
+    background-color: lightblue;
+}
+
+.removeDistrictButtonContainer:hover {
     border-radius: 100%;
     background-color: lightblue;
 }
@@ -151,11 +183,15 @@ input:focus {
 .addDistrictButtonContainer:hover .addDistrictIcon {
     filter: hue-rotate(0deg) contrast(100%) saturate(1000%) brightness(90%);
 }
+.removeDistrictButtonContainer:hover .removeDistrictIcon {
+    filter: hue-rotate(-150deg) contrast(100%) saturate(1000%) brightness(90%);
+}
 .geolocateButtonContainer:hover .geoLocateIcon {
     filter: hue-rotate(-200deg) contrast(100%) saturate(1000%) brightness(90%);
 }
 
 .addDistrictIcon,
+.removeDistrictIcon,
 .geoLocateIcon {
     position: absolute;
     display: block;
@@ -170,8 +206,12 @@ input:focus {
     background-repeat: no-repeat;
     background-size: contain;
 }
+
 .addDistrictIcon {
     background-image: url(../../img/add.png);
+}
+.removeDistrictIcon {
+    background-image: url(../../img/remove.png);
 }
 .geoLocateIcon {
     background-image: url(../../img/geolocate.png);
