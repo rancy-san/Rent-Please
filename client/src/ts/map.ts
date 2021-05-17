@@ -48,6 +48,18 @@ class Mapping {
         this.map.on('moveend', this.getLonLatMap);
     }
 
+    public addEventDisplayZoom(view: any, mapZoomDisplay: HTMLElement): void {
+       this.map.on('wheel',() => this.displayZoom(view, mapZoomDisplay));
+        
+        document.getElementsByClassName('ol-zoom-in')[0].addEventListener('click', () => this.displayZoom(view, mapZoomDisplay));
+
+        document.getElementsByClassName('ol-zoom-out')[0].addEventListener('click', () => this.displayZoom(view, mapZoomDisplay));
+    }
+
+    public displayZoom(view: any, mapZoomDisplay:HTMLElement): void {
+        setTimeout(() => mapZoomDisplay.innerText = (Math.round((this.zoomDefault / view.getZoom()) * 100) + "%") , 250);
+    }
+
     public mapLoaded(): boolean {
         return this.map.once('postrender', function () {
             return true;
@@ -55,10 +67,11 @@ class Mapping {
     }
 
     private getLonLatMap(event: any): void {
-        let map:any = event.map;
-
-        let view: any = map.getView();
-        let center: number = view.getCenter();
+        let center: number;
+        
+        this.map = event.map;
+        this.view = this.map.getView();
+        center = this.view.getCenter();
 
         /*
         // @ts-ignore

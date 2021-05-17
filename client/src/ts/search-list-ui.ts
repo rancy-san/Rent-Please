@@ -24,6 +24,8 @@ class SearchListUI extends SearchUI {
         let buttonContainer: HTMLElement = this.createDIVButton("buttonContainer");
         let addDistrictButtonContainer: HTMLElement = this.createDIVButton("addDistrictButtonContainer");
         let addDistrictIcon: HTMLElement = this.createDIVButton("addDistrictIcon");
+        let removeDistrictButtonContainer: HTMLElement = this.createDIVButton("removeDistrictButtonContainer");
+        let removeDistrictIcon:HTMLElement = this.createDIVButton("removeDistrictIcon");
         let geolocateButtonContainer: HTMLElement = this.createDIVButton("geolocateButtonContainer");
         let geoLocateIcon: HTMLElement = this.createDIVButton("geoLocateIcon");
 
@@ -33,10 +35,14 @@ class SearchListUI extends SearchUI {
         resultContainer.setAttribute("data-districtLat", districtLat.toString());
         resultContainer.setAttribute("data-districtLon", districtLon.toString());
 
-        // add data to Prepare list event triggered
+        //resultContainer.setAttribute("data-mapBBox1", districtLon.toString());
+        //resultContainer.setAttribute("data-mapBBox2", districtLon.toString());
+
+        // add an event that adds data to the other list
         // @ts-ignore
         this.searchListUX.addEventAppendToPrepareData(
-            addDistrictButtonContainer, 
+            addDistrictButtonContainer,
+            removeDistrictButtonContainer,
             resultContainer, 
             this.prepareWrapper, 
             this.resultWrapper,
@@ -44,31 +50,25 @@ class SearchListUI extends SearchUI {
             districtLon
         );
 
+        this.searchListUX.addEventRemoveFromPrepareData(removeDistrictButtonContainer, resultContainer);
+
+        // this.searchListUX.addEventRemoveFromPrepareData();
+
+        // add an event to update the map longitude and latitude
         this.searchListUX.addEventUpdateLonLat(
             geolocateButtonContainer, 
             districtLat, 
             districtLon
         );
 
-        /*
-        
-        this.searchListUX.addEventUpdateBBox(
-            geolocateButtonContainer,
-            districtBBoxLon1,
-            districtBBoxLat1,
-            districtBBoxLon2,
-            districtBBoxLat2
-        );
-
-        */
-        
-
         // nest icons in its respective container
         addDistrictButtonContainer.appendChild(addDistrictIcon);
+        removeDistrictButtonContainer.appendChild(removeDistrictIcon);
         geolocateButtonContainer.appendChild(geoLocateIcon);
 
         // add buttons to button container
         buttonContainer.appendChild(geolocateButtonContainer);
+        buttonContainer.appendChild(removeDistrictButtonContainer);
         buttonContainer.appendChild(addDistrictButtonContainer);
 
         // place buttons on in the result found

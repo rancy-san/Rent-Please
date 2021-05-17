@@ -27,7 +27,6 @@ class Searching {
 
     constructor(searchListUX: SearchListUX) {
         this.geolocationURL = "http://geogratis.gc.ca/services/geolocation/en/locate?q=";
-        // @ts-ignore
         this.searchListUI = new SearchListUI(searchListUX);
     }
 

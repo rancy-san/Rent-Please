@@ -6,16 +6,21 @@ class SearchListUX extends SearchUX {
     }
 
     public addEventAppendToPrepareData(
-        buttonElement: HTMLElement,
+        buttonAddElement: HTMLElement,
+        buttonRemoveElement: HTMLElement,
         elementResult: HTMLElement,
         listElementData: HTMLElement,
         listElementResult: HTMLElement,
         longitude: number, 
         latitude: number
     ): void {
-        buttonElement.addEventListener("click", () => this.appendToPrepareData(elementResult, listElementData, listElementResult));
+        buttonAddElement.addEventListener("click", () => this.appendToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult, longitude, latitude));
     }
 
+    public addEventRemoveFromPrepareData(buttonRemoveElement: HTMLElement, 
+        elementResult: HTMLElement): void {
+        buttonRemoveElement.addEventListener("click", () => this.removeFromPrepareData(elementResult));
+    }
 
     public addEventUpdateLonLat(
         buttonElement: HTMLElement, 
@@ -25,12 +30,28 @@ class SearchListUX extends SearchUX {
         buttonElement.addEventListener("click", () => this.updateLonLat(longitude, latitude));
     }
 
+    public removeFromPrepareData(elementResult:HTMLElement): void {
+        elementResult.remove();
+    }
+
     public appendToPrepareData(
+        buttonAddElement: HTMLElement,
+        buttonRemoveElement: HTMLElement,
         elementResult: HTMLElement, 
         listElementData: HTMLElement, 
-        listElementResults: HTMLElement
+        listElementResults: HTMLElement,
+        longitude: number, 
+        latitude: number
     ): void {
-        this.updateLonLat();
+        this.updateLonLat(longitude, latitude);
+
+        
+        // @ts-ignore
+        console.log(ol.proj.toLonLat([this.getView().calculateExtent(this.getMap().getSize())[0], this.getView().calculateExtent(this.getMap().getSize())[1]]));
+        
+        buttonAddElement.style.display = "none";
+        buttonRemoveElement.style.display = "block";
+
         listElementData.appendChild(elementResult);
         // @ts-ignore
         this.clearList(listElementResults);
@@ -41,7 +62,7 @@ class SearchListUX extends SearchUX {
         this.view.centerOn(ol.proj.fromLonLat([longitude, latitude]), this.map.getSize(), [(this.map.getSize()[0] / 2), this.map.getSize()[1] / 2]);
     }
     
-    public initLonlatDefault() {
+    public initLonlatDefault(): void {
         
         // @ts-ignore
         this.lonlat1Default = ol.proj.toLonLat([this.view.calculateExtent(this.map.getSize())[0], this.view.calculateExtent(this.map.getSize())[1]]);
@@ -57,7 +78,7 @@ class SearchListUX extends SearchUX {
         inactiveTab: string,
         activeList: string,
         inactiveList: string
-    ) {
+    ) : void{
         (document.getElementById(buttonElementName) as HTMLElement).addEventListener("click", () => this.switchTab(activeTab, inactiveTab, activeList, inactiveList));
     }
 
@@ -72,7 +93,7 @@ class SearchListUX extends SearchUX {
         this.deactivateTab(activeTab, activeList);
     }
 
-    private activateTab(inactiveTabID: string, inactiveListID: string) {
+    private activateTab(inactiveTabID: string, inactiveListID: string): void {
 
         let inactiveTab: HTMLElement = document.getElementById(inactiveTabID) as HTMLElement;
         let inactiveList: HTMLElement = document.getElementById(inactiveListID) as HTMLElement;
@@ -84,7 +105,7 @@ class SearchListUX extends SearchUX {
 
     }
 
-    private deactivateTab(activeTabID: string, activeListID: string) {
+    private deactivateTab(activeTabID: string, activeListID: string): void {
         let activeTab: HTMLElement = document.getElementById(activeTabID) as HTMLElement;
         let activeList: HTMLElement = document.getElementById(activeListID) as HTMLElement;
 

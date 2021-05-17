@@ -1,36 +1,36 @@
-window.onload = function () {
-    let longitude: number = -123.364722;
-    let latitude: number = 48.428333;
+///<reference path='search-list-ux.ts' />
+///<reference path='search-input-ui.ts' />
+///<reference path='map.ts' />
 
-    // @ts-ignore
-    let map: Mapping = new Mapping(longitude, latitude);
-    // @ts-ignore
-    //let searchUI: SearchUI;
-    // @ts-ignore
-    let searchUX: SearchUX;
-    // @ts-ignore
+window.onload = function () { 
     let searchListUX: SearchListUX;
-    // @ts-ignore
     let searchInputUI: SearchInputUI;
 
     let view: any;
 
-    let mapZoomOutButton: Element;
-    let mapZoomInButton: Element;
+    let mapZoomOutButton: HTMLElement;
+    let mapZoomInButton: HTMLElement;
+    let mapZoomDisplay: HTMLElement;
+
+    let longitude: number = -123.364722;
+    let latitude: number = 48.428333;
+
+    let map: Mapping = new Mapping(longitude, latitude);
+
 
     map.createMap();
 
-    mapZoomOutButton = document.getElementsByClassName("ol-zoom-out")[0];
-    mapZoomInButton = document.getElementsByClassName("ol-zoom-in")[0];
+    mapZoomOutButton = document.getElementsByClassName("ol-zoom-out")[0] as HTMLElement;
+    mapZoomInButton = document.getElementsByClassName("ol-zoom-in")[0] as HTMLElement;
+    mapZoomDisplay = document.getElementById('mapZoomDisplay') as HTMLElement;
 
     mapZoomOutButton.innerHTML = "<div id='zoomOutButton'>-</div>";
     mapZoomInButton.innerHTML = "<div id='zoomInButton'>+</div>";
 
-    map.addEventGetLonLatOnMapMove();
     if(map.mapLoaded()) {
-        // @ts-ignore
-        //searchUI = new SearchUI();
-        // @ts-ignore
+        map.addEventGetLonLatOnMapMove();
+        map.addEventDisplayZoom(map.getView(), mapZoomDisplay);
+        
         searchListUX = new SearchListUX();
 
         //view = map.getView();
@@ -39,11 +39,10 @@ window.onload = function () {
         searchListUX.setView(map.getView());
         searchListUX.initLonlatDefault();
 
-        // @ts-ignore
         searchInputUI = new SearchInputUI(searchListUX);
 
         //view.centerOn([-13734663.156961612, 6182672.176861948], map.getMap().getSize(), [674/2, 484/2]);
-        //searchUX.setMap(map.getView());
+
         // @ts-ignore
         //ol.proj.toLonLat(map.getMapEvent().values_.view.values_.center) = [-13734663.156961612, 6182672.176861948];
 
