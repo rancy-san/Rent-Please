@@ -1,3 +1,11 @@
+/**
+ * @filedname       main.ts
+ * @description     When the DOM window loads, this file will
+ *                      begin loading the OpenLayers map and
+ *                      prepare the DOM elements to be responsive,
+ *                      and respond to map movement.
+ */
+
 ///<reference path='search-list-ux.ts' />
 ///<reference path='search-input-ui.ts' />
 ///<reference path='map.ts' />
@@ -7,47 +15,42 @@ window.onload = function () {
     let searchInputUI: SearchInputUI;
 
     let view: any;
-
+    // OpenLayers zoom buttons
     let mapZoomOutButton: HTMLElement;
     let mapZoomInButton: HTMLElement;
     let mapZoomDisplay: HTMLElement;
-
+    // default map coordinates
     let longitude: number = -123.364722;
     let latitude: number = 48.428333;
-
+    // instantiate the Mapping object to being working with the map
     let map: Mapping = new Mapping(longitude, latitude);
 
-
+    // create the Openlayers map
     map.createMap();
 
+    // obtain zoom buttons from OpenLayers
     mapZoomOutButton = document.getElementsByClassName("ol-zoom-out")[0] as HTMLElement;
     mapZoomInButton = document.getElementsByClassName("ol-zoom-in")[0] as HTMLElement;
     mapZoomDisplay = document.getElementById('mapZoomDisplay') as HTMLElement;
 
+    // replace default text data to make the buttons clearer
     mapZoomOutButton.innerHTML = "<div id='zoomOutButton'>-</div>";
     mapZoomInButton.innerHTML = "<div id='zoomInButton'>+</div>";
 
+    // ensure map is loaded before obtaining and setting map data
     if(map.mapLoaded()) {
+        // respond to movement actions to the OpenLayers map
         map.addEventGetLonLatOnMapMove();
+        // respond to zoom actions on the map
         map.addEventDisplayZoom(map.getView(), mapZoomDisplay);
-        
+        // add extra functionality to the list
         searchListUX = new SearchListUX();
-
-        //view = map.getView();
-
+        // pass the map and view object to the following objects
         searchListUX.setMap(map.getMap());
         searchListUX.setView(map.getView());
-        searchListUX.initLonlatDefault();
 
         searchInputUI = new SearchInputUI(searchListUX);
-
-        //view.centerOn([-13734663.156961612, 6182672.176861948], map.getMap().getSize(), [674/2, 484/2]);
-
-        // @ts-ignore
-        //ol.proj.toLonLat(map.getMapEvent().values_.view.values_.center) = [-13734663.156961612, 6182672.176861948];
-
-        //search.searchDistrict(searchUI.getSearchTerm());
-
+        // add events to the static UI components
         searchListUX.addEventSwitchTab(
             'tabSearchResults',
             'tabPrepareResults',
@@ -56,6 +59,7 @@ window.onload = function () {
             'resultWrapper'
         );
 
+        // add events to the static UI components
         searchListUX.addEventSwitchTab(
             'tabPrepareResults',
             'tabSearchResults',

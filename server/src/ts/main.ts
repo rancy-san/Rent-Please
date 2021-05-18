@@ -1,7 +1,7 @@
 
 /**
- * Filename:        main.ts
- * Description:     This file is the starting point of the application.
+ * @filename        main.ts
+ * @description     This file is the starting point of the application.
  *                  Commandline arguments are handled here to ensure the
  *                  valid type of data collection is chosen to run the 
  *                  Rent, Please! application.
@@ -18,7 +18,7 @@ class Main {
     private argsLength:number;
 
     /**
-     * Constructor description:     Set basic data from the commandline
+     * @description     Set basic data from the commandline
      */
     constructor(){
         this.args = process.argv;
@@ -26,9 +26,12 @@ class Main {
     }
 
     /**
-     * Function Name:   validateArgs
-     * Description:     Processes the commandline argument for only 1 argument per line ran.
-     *                  This is meant to allow for the application to run in parallel with itself.
+     * @function        validateArgs
+     * @description     Processes the commandline argument for only 
+     *                      1 argument per line.
+     *                  This is meant to allow for the application to 
+     *                      run in parallel with itself.
+     * @return          {void}
      */
     public validateArgs():void {
         // strict setting to ensure one command line arugment is sent
