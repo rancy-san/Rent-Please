@@ -66,7 +66,8 @@ class Searching {
                     this.searchListUI.createResultContainer(
                         searchData[i].title,
                         searchData[i].geometry.coordinates[0],
-                        searchData[i].geometry.coordinates[1]
+                        searchData[i].geometry.coordinates[1],
+                        false
                     );
                 }
             }

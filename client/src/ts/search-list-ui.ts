@@ -16,7 +16,8 @@ class SearchListUI extends SearchUI {
     constructor(searchListUX: SearchListUX) {
         super();
         this.searchListUX = searchListUX;
-
+        // default container
+        this.createResultContainer("Custom District", 0,0, true);
     }
 
     /**
@@ -33,7 +34,8 @@ class SearchListUI extends SearchUI {
     public createResultContainer(
         districtName: string,
         districtLat: number,
-        districtLon: number
+        districtLon: number,
+        isDefaultItem: boolean
     ): void {
         // 1 result item
         let resultContainer: HTMLElement = this.createDIVButton("resultContainer");
@@ -46,7 +48,7 @@ class SearchListUI extends SearchUI {
         let addDistrictIcon: HTMLElement = this.createDIVButton("addDistrictIcon");
         // delete/remove button
         let removeDistrictButtonContainer: HTMLElement = this.createDIVButton("removeDistrictButtonContainer");
-        let removeDistrictIcon:HTMLElement = this.createDIVButton("removeDistrictIcon");
+        let removeDistrictIcon: HTMLElement = this.createDIVButton("removeDistrictIcon");
         // geolocate button
         let geolocateButtonContainer: HTMLElement = this.createDIVButton("geolocateButtonContainer");
         let geoLocateIcon: HTMLElement = this.createDIVButton("geoLocateIcon");
@@ -58,26 +60,39 @@ class SearchListUI extends SearchUI {
         resultContainer.setAttribute("data-districtLat", districtLat.toString());
         resultContainer.setAttribute("data-districtLon", districtLon.toString());
 
+        
         // add an event that adds data to the other list
         this.searchListUX.addEventAppendToPrepareData(
             addDistrictButtonContainer,
             removeDistrictButtonContainer,
-            resultContainer, 
-            this.prepareWrapper, 
+            resultContainer,
+            this.prepareWrapper,
             this.resultWrapper,
             districtLat,
-            districtLon
+            districtLon,
+            isDefaultItem
+        );
+
+        // add an event to update the map longitude and latitude
+        this.searchListUX.addEventUpdateLonLat(
+            geolocateButtonContainer,
+            districtLat,
+            districtLon,
         );
 
         // add the ability to remove item from another list
         this.searchListUX.addEventRemoveFromPrepareData(removeDistrictButtonContainer, resultContainer);
 
-        // add an event to update the map longitude and latitude
-        this.searchListUX.addEventUpdateLonLat(
-            geolocateButtonContainer, 
-            districtLat, 
-            districtLon
-        );
+        /*
+        async () => {
+            new Promise<void>(resolve => {
+                resolve();
+            }).then(()=> {
+                
+            });
+        }
+        */
+
 
         // nest icons in its respective container
         addDistrictButtonContainer.appendChild(addDistrictIcon);
@@ -92,7 +107,7 @@ class SearchListUI extends SearchUI {
         // place buttons on in the result found
         resultContainer.appendChild(resultNameContainer);
         resultContainer.appendChild(buttonContainer);
-        
+
         this.resultWrapper.appendChild(resultContainer);
     }
 
@@ -108,5 +123,4 @@ class SearchListUI extends SearchUI {
 
         return button;
     }
-
 }

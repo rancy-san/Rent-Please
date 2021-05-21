@@ -35,10 +35,11 @@ class SearchListUX extends SearchUX {
         listElementData: HTMLElement,
         listElementResult: HTMLElement,
         longitude: number, 
-        latitude: number
+        latitude: number,
+        isDefaultItem:boolean
     ): void {
         // add click event to add the search result to another list
-        buttonAddElement.addEventListener("click", () => this.appendToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult, longitude, latitude));
+        buttonAddElement.addEventListener("click", () => this.appendToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult, longitude, latitude, isDefaultItem));
     }
 
     /**
@@ -65,7 +66,7 @@ class SearchListUX extends SearchUX {
     public addEventUpdateLonLat(
         buttonElement: HTMLElement, 
         longitude: number, 
-        latitude: number,
+        latitude: number
     ): void {
         // add event to update the map's (x, y) position
         buttonElement.addEventListener("click", () => this.updateLonLat(longitude, latitude));
@@ -103,8 +104,15 @@ class SearchListUX extends SearchUX {
         listElementData: HTMLElement, 
         listElementResults: HTMLElement,
         longitude: number, 
-        latitude: number
+        latitude: number,
+        isDefaultItem: boolean
     ): void {
+        
+        // re-create element if it was the default item before any changes are made 
+        if (isDefaultItem) {
+            this.createDefaultListItem(elementResult, listElementData, listElementResults)
+        }
+
         // change map target based on longitude and latitude
         this.updateLonLat(longitude, latitude);
 
@@ -113,7 +121,46 @@ class SearchListUX extends SearchUX {
         buttonRemoveElement.style.display = "block";
         // add list item to the list
         listElementData.appendChild(elementResult);
+
+
+        
+        // get bounding box after lonlat update
+        elementResult.setAttribute("data-boundingBox", this.getBoundingBox().toString());
+
+        // clear list
         this.clearList(listElementResults);
+    }
+
+    private createDefaultListItem(elementResult: HTMLElement, listElementData:HTMLElement, listElementResults:HTMLElement) {
+        // clone the DIV element
+        let defaultItem:HTMLElement = elementResult.cloneNode(true) as HTMLElement;
+        // get cloned elements within cloned element to later re-add events to those elements
+        let defaultItemName: HTMLElement = defaultItem.children[0] as HTMLElement;
+        let button:HTMLElement = defaultItem.children[1] as HTMLElement;
+        let addButton: HTMLElement = button.children[2] as HTMLElement;
+        let removeButton:HTMLElement = button.children[1] as HTMLElement;
+        let geolocateButton:HTMLElement = button.children[0] as HTMLElement;
+
+                // re-add events
+                this.addEventAppendToPrepareData(addButton, removeButton, defaultItem, listElementData, listElementResults, 0, 0, true);
+        
+        
+        this.addEventRemoveFromPrepareData(removeButton, defaultItem);
+        this.addEventUpdateLonLat(geolocateButton, 0, 0);
+        
+        defaultItem.style.display = "none";
+
+        /*
+        () => async () => {
+            return new Promise<void>((resolve) => {
+                resolve();
+            }).then(()=> {
+                
+            });
+        }
+        */
+
+        listElementResults.insertBefore(defaultItem, listElementResults.firstChild);
     }
 
     /**
@@ -127,19 +174,6 @@ class SearchListUX extends SearchUX {
         // @ts-ignore
         this.view.centerOn(ol.proj.fromLonLat([longitude, latitude]), this.map.getSize(), [(this.map.getSize()[0] / 2), this.map.getSize()[1] / 2]);
     }
-    
-
-    /*
-    public initLonlatDefault(): void {
-        
-        // @ts-ignore
-        this.lonlat1Default = ol.proj.toLonLat([this.view.calculateExtent(this.map.getSize())[0], this.view.calculateExtent(this.map.getSize())[1]]);
-        
-        // @ts-ignore
-        this.lonlat2Default = ol.proj.toLonLat([this.view.calculateExtent(this.map.getSize())[2], this.view.calculateExtent(this.map.getSize())[3]]);
-        
-    }
-    */
 
     /**
      * @function        addEventSwitchTab
@@ -214,6 +248,31 @@ class SearchListUX extends SearchUX {
         activeTab.style.opacity = "0.45";
 
         activeList.style.display = "none";
+    }
+
+    private getCenter() {
+        return this.view.getCenter();
+    }
+
+    private getBoundingBox(): number[] {
+        let boundingBox: number[];
+        let lonlat1: number[];
+        let lonlat2: number[];
+
+        boundingBox = [0, 0, 0, 0];
+
+        // @ts-ignore
+        lonlat1 = ol.proj.toLonLat([this.view.calculateExtent(this.map.getSize())[0], this.view.calculateExtent(this.map.getSize())[1]]);
+
+        // @ts-ignore
+        lonlat2 = ol.proj.toLonLat([this.view.calculateExtent(this.map.getSize())[2], this.view.calculateExtent(this.map.getSize())[3]]);
+
+        boundingBox[0] = lonlat1[0];
+        boundingBox[1] = lonlat1[1];
+        boundingBox[2] = lonlat2[0];
+        boundingBox[3] = lonlat2[1];
+
+        return boundingBox;
     }
 
 }

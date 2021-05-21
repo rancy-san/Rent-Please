@@ -10,6 +10,7 @@
 class SearchInputUX extends SearchUX {
 
     private searchListUX: SearchListUX;
+    private search: Searching;
 
     /**
      * @description     Set the UX object for this class to be passed on
@@ -18,6 +19,8 @@ class SearchInputUX extends SearchUX {
     constructor(searchListUX: SearchListUX) {
         super();
         this.searchListUX = searchListUX;
+        // create Searching object and request data from user's input
+        this.search = new Searching(this.searchListUX);
     }
 
     /**
@@ -44,9 +47,7 @@ class SearchInputUX extends SearchUX {
      * @return          {void}
      */
     public searchDistrict(inputElement: HTMLInputElement, listElementResult: HTMLElement) {
-        // create Searching object and request data from user's input
-        let search: Searching = new Searching(this.searchListUX);
-        search.searchDistrict(inputElement.value);
+        this.search.searchDistrict(inputElement.value);
 
         // clear previous results if any
         this.clearList(listElementResult);

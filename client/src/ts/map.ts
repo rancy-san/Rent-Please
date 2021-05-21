@@ -85,9 +85,10 @@ class Mapping {
      * @description     Listen for map drag/movement
      * @return          {void}
      */
-    public addEventGetLonLatOnMapMove(): void {
+    public addEventGetLonLatOnMapMove(elementName:string): void {
         // get longitude and latitude on map onload/move/drag
         this.map.on('moveend', this.getLonLatMap);
+        this.map.on('pointerdrag', () => this.displayDefaultElement(elementName));
     }
 
     /**
@@ -135,10 +136,12 @@ class Mapping {
     * @return          {void}
     */
     private getLonLatMap(event: any): void {
-        let center: number;
         this.map = event.map;
         this.view = this.map.getView();
-        center = this.view.getCenter();
+    }
+
+    private displayDefaultElement(elementName:string):void {
+        (document.getElementsByClassName(elementName)[0] as HTMLElement).style.display = "block";
     }
 
     /**

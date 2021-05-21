@@ -9,8 +9,10 @@
 ///<reference path='search-list-ux.ts' />
 ///<reference path='search-input-ui.ts' />
 ///<reference path='map.ts' />
+///<reference path='client.ts' />
 
 window.onload = function () { 
+    let client: Client;
     let searchListUX: SearchListUX;
     let searchInputUI: SearchInputUI;
 
@@ -37,10 +39,12 @@ window.onload = function () {
     mapZoomOutButton.innerHTML = "<div id='zoomOutButton'>-</div>";
     mapZoomInButton.innerHTML = "<div id='zoomInButton'>+</div>";
 
+    client = new Client();
+    client.requestReport();
+
     // ensure map is loaded before obtaining and setting map data
     if(map.mapLoaded()) {
-        // respond to movement actions to the OpenLayers map
-        map.addEventGetLonLatOnMapMove();
+
         // respond to zoom actions on the map
         map.addEventDisplayZoom(map.getView(), mapZoomDisplay);
         // add extra functionality to the list
@@ -67,5 +71,8 @@ window.onload = function () {
             'resultWrapper',
             'prepareWrapper'
         );
+        
+        // respond to movement actions to the OpenLayers map
+        map.addEventGetLonLatOnMapMove('resultContainer');
     }
 }
