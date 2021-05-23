@@ -71,8 +71,12 @@ window.onload = function () {
             'resultWrapper',
             'prepareWrapper'
         );
-        
+
+        // default lonlat
+        map.setDisplayDefaultElementLonLat('resultContainer');
         // respond to movement actions to the OpenLayers map
-        map.addEventGetLonLatOnMapMove('resultContainer');
+        map.addEventGetLonLatOnMapMove();
+        // append the default district to the DOM
+        map.addEventDisplayDefaultDistrict('resultContainer');
     }
 }

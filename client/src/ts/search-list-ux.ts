@@ -35,11 +35,10 @@ class SearchListUX extends SearchUX {
         listElementData: HTMLElement,
         listElementResult: HTMLElement,
         longitude: number, 
-        latitude: number,
-        isDefaultItem:boolean
+        latitude: number
     ): void {
         // add click event to add the search result to another list
-        buttonAddElement.addEventListener("click", () => this.appendToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult, longitude, latitude, isDefaultItem));
+        buttonAddElement.addEventListener("click", () => this.appendToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult, longitude, latitude));
     }
 
     /**
@@ -70,6 +69,20 @@ class SearchListUX extends SearchUX {
     ): void {
         // add event to update the map's (x, y) position
         buttonElement.addEventListener("click", () => this.updateLonLat(longitude, latitude));
+    }
+
+    public addEventAppendDefaultElementToPrepareData(
+        buttonAddElement: HTMLElement,
+        buttonRemoveElement: HTMLElement,
+        elementResult: HTMLElement,
+        listElementData: HTMLElement,
+        listElementResult: HTMLElement
+        ) {
+            buttonAddElement.addEventListener("click", ()=> this.appendDefaultElementToPrepareData(buttonAddElement, buttonRemoveElement, elementResult, listElementData, listElementResult));
+        }
+    
+    public addEventUpdateDefaultElementLonLat(buttonElement: HTMLElement, defaultElement:HTMLElement): void {
+        buttonElement.addEventListener("click", () => this.updateDefaultElementLonLat( defaultElement));
     }
 
     /**
@@ -104,15 +117,9 @@ class SearchListUX extends SearchUX {
         listElementData: HTMLElement, 
         listElementResults: HTMLElement,
         longitude: number, 
-        latitude: number,
-        isDefaultItem: boolean
+        latitude: number
     ): void {
-        
-        // re-create element if it was the default item before any changes are made 
-        if (isDefaultItem) {
-            this.createDefaultListItem(elementResult, listElementData, listElementResults)
-        }
-
+    
         // change map target based on longitude and latitude
         this.updateLonLat(longitude, latitude);
 
@@ -131,7 +138,7 @@ class SearchListUX extends SearchUX {
         this.clearList(listElementResults);
     }
 
-    private createDefaultListItem(elementResult: HTMLElement, listElementData:HTMLElement, listElementResults:HTMLElement) {
+    private appendDefaultElementToPrepareData(buttonAddElement:HTMLElement, buttonRemoveElement:HTMLElement, elementResult: HTMLElement, listElementData:HTMLElement, listElementResults:HTMLElement) {
         // clone the DIV element
         let defaultItem:HTMLElement = elementResult.cloneNode(true) as HTMLElement;
         // get cloned elements within cloned element to later re-add events to those elements
@@ -141,24 +148,34 @@ class SearchListUX extends SearchUX {
         let removeButton:HTMLElement = button.children[1] as HTMLElement;
         let geolocateButton:HTMLElement = button.children[0] as HTMLElement;
 
-                // re-add events
-                this.addEventAppendToPrepareData(addButton, removeButton, defaultItem, listElementData, listElementResults, 0, 0, true);
+        let defaultLatitude: number = parseFloat((defaultItem.children[2].children[0].children[1] as HTMLElement).innerText);
+        let defaultLongitude: number = parseFloat((defaultItem.children[2].children[1].children[1] as HTMLElement).innerText);
+
+
+        // re-add events
+        this.addEventAppendDefaultElementToPrepareData(addButton, removeButton, defaultItem, listElementData, listElementResults);
+        
+        //this.addEventAppendToPrepareData(addButton, removeButton, elementResult, listElementData, listElementResults, defaultLongitude, defaultLatitude);
         
         
         this.addEventRemoveFromPrepareData(removeButton, defaultItem);
-        this.addEventUpdateLonLat(geolocateButton, 0, 0);
+        this.addEventUpdateLonLat(geolocateButton, defaultLongitude, defaultLatitude);
         
         defaultItem.style.display = "none";
 
-        /*
-        () => async () => {
-            return new Promise<void>((resolve) => {
-                resolve();
-            }).then(()=> {
-                
-            });
-        }
-        */
+        // switch from add button to delete button
+        buttonAddElement.style.display = "none";
+        buttonRemoveElement.style.display = "block";
+        // add list item to the list
+        listElementData.appendChild(elementResult);
+ 
+ 
+         
+        // get bounding box after lonlat update
+        elementResult.setAttribute("data-boundingBox", this.getBoundingBox().toString());
+ 
+        // clear list
+        this.clearList(listElementResults);
 
         listElementResults.insertBefore(defaultItem, listElementResults.firstChild);
     }
@@ -172,7 +189,17 @@ class SearchListUX extends SearchUX {
      */
     private updateLonLat(longitude: number, latitude: number): void {
         // @ts-ignore
+        console.log(ol.proj.fromLonLat([longitude, latitude]));
+        // @ts-ignore
         this.view.centerOn(ol.proj.fromLonLat([longitude, latitude]), this.map.getSize(), [(this.map.getSize()[0] / 2), this.map.getSize()[1] / 2]);
+    }
+
+    private updateDefaultElementLonLat(defaultElement: HTMLElement): void {
+        let defaultLatitude: number = parseFloat((defaultElement.children[2].children[0].children[1] as HTMLElement).innerText);
+        let defaultLongitude: number = parseFloat((defaultElement.children[2].children[1].children[1] as HTMLElement).innerText);
+
+        // @ts-ignore
+        this.view.centerOn(ol.proj.fromLonLat([defaultLongitude, defaultLatitude]), this.map.getSize(), [(this.map.getSize()[0] / 2), this.map.getSize()[1] / 2]);
     }
 
     /**

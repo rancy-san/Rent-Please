@@ -14,10 +14,13 @@ class SearchListUI extends SearchUI {
      * @param           {SearchListUX} searchListUX 
      */
     constructor(searchListUX: SearchListUX) {
+        let lonlat:number[];
         super();
         this.searchListUX = searchListUX;
+        // @ts-ignore
+        lonlat = ol.proj.toLonLat(this.searchListUX.getView().getCenter());
         // default container
-        this.createResultContainer("Custom District", 0,0, true);
+        this.createResultContainer("Custom District", lonlat[0], lonlat[1], true);
     }
 
     /**
@@ -52,8 +55,16 @@ class SearchListUI extends SearchUI {
         // geolocate button
         let geolocateButtonContainer: HTMLElement = this.createDIVButton("geolocateButtonContainer");
         let geoLocateIcon: HTMLElement = this.createDIVButton("geoLocateIcon");
+        let lonlatContainer: HTMLElement = this.createDIVButton("lanlatContainer");
+        let lonContainer: HTMLElement = this.createDIVButton("lonContainer");
+        let latContainer: HTMLElement = this.createDIVButton("latContainer");
+        let lonHeader: HTMLElement = this.createDIVButton("lonHeader");
+        let latHeader: HTMLElement = this.createDIVButton("latHeader");
+        let lon:HTMLElement = this.createDIVButton("lon");
+        let lat:HTMLElement = this.createDIVButton("lat");
 
         resultNameContainer.innerText = districtName;
+        resultNameContainer.contentEditable = "true";
 
         // store some data on the DOM
         resultContainer.setAttribute("data-districtName", districtName);
@@ -61,24 +72,34 @@ class SearchListUI extends SearchUI {
         resultContainer.setAttribute("data-districtLon", districtLon.toString());
 
         
-        // add an event that adds data to the other list
-        this.searchListUX.addEventAppendToPrepareData(
-            addDistrictButtonContainer,
-            removeDistrictButtonContainer,
-            resultContainer,
-            this.prepareWrapper,
-            this.resultWrapper,
-            districtLat,
-            districtLon,
-            isDefaultItem
-        );
-
-        // add an event to update the map longitude and latitude
-        this.searchListUX.addEventUpdateLonLat(
-            geolocateButtonContainer,
-            districtLat,
-            districtLon,
-        );
+        if (!isDefaultItem) {
+            // add an event that adds data to the other list
+            this.searchListUX.addEventAppendToPrepareData(
+                addDistrictButtonContainer,
+                removeDistrictButtonContainer,
+                resultContainer,
+                this.prepareWrapper,
+                this.resultWrapper,
+                districtLon,
+                districtLat
+            );
+            // add an event to update the map longitude and latitude
+            this.searchListUX.addEventUpdateLonLat(
+                geolocateButtonContainer,
+                districtLon,
+                districtLat,
+            );
+        } else {
+            // update lon lat for default element
+            this.searchListUX.addEventUpdateDefaultElementLonLat(geolocateButtonContainer,resultContainer);
+            // update appending data for default element
+            this.searchListUX.addEventAppendDefaultElementToPrepareData(
+                addDistrictButtonContainer,
+                removeDistrictButtonContainer,
+                resultContainer,
+                this.prepareWrapper,
+                this.resultWrapper);
+        }
 
         // add the ability to remove item from another list
         this.searchListUX.addEventRemoveFromPrepareData(removeDistrictButtonContainer, resultContainer);
@@ -93,6 +114,22 @@ class SearchListUI extends SearchUI {
         }
         */
 
+       // set longitude and latitude values
+        latHeader.innerText = "Latitude: ";
+        lonHeader.innerText = "Longitude: ";
+        lat.innerText = districtLat.toString();
+        lon.innerText = districtLon.toString();
+
+        // nest values for latitude
+        latContainer.appendChild(latHeader);
+        latContainer.appendChild(lat);
+
+        // nest values for longitude
+        lonContainer.appendChild(lonHeader);
+        lonContainer.appendChild(lon);
+
+        lonlatContainer.appendChild(latContainer);
+        lonlatContainer.appendChild(lonContainer);
 
         // nest icons in its respective container
         addDistrictButtonContainer.appendChild(addDistrictIcon);
@@ -107,6 +144,7 @@ class SearchListUI extends SearchUI {
         // place buttons on in the result found
         resultContainer.appendChild(resultNameContainer);
         resultContainer.appendChild(buttonContainer);
+        resultContainer.appendChild(lonlatContainer);
 
         this.resultWrapper.appendChild(resultContainer);
     }

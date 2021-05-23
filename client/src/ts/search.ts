@@ -65,8 +65,8 @@ class Searching {
                     // the fetched data obtained should be stored somewhere instead of being used right away
                     this.searchListUI.createResultContainer(
                         searchData[i].title,
-                        searchData[i].geometry.coordinates[0],
                         searchData[i].geometry.coordinates[1],
+                        searchData[i].geometry.coordinates[0],
                         false
                     );
                 }

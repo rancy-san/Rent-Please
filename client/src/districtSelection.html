@@ -7,9 +7,6 @@
 
 <body>
     <div id="districtSelection">
-        <div id="mapZoomDisplayContainer">
-            <div id="mapZoomDisplay">100%</div>
-        </div>
         <div id="searchContainer">
             <div id=searchFieldContainer>
                 <div id="searchIcon"></div>
@@ -24,7 +21,19 @@
             <div id="prepareWrapper"></div>
 
         </div>
-        <div id="map" class="map"></div>
+        <div id="map" class="map">
+
+            <div id="lonlatDisplayWrapper">
+                <div id="lonlatDisplayContainer">
+                    (<span id="lonDisplay"></span>,<span id="latDisplay"></span>)
+                </div>
+            </div>
+            
+            <div id="mapZoomDisplayContainer">
+                <div id="mapZoomDisplay">100%</div>
+            </div>
+
+        </div>
     </div>
     <script type="text/javascript" src="./js/lib/ol.js"></script>
     <script type="text/javascript" src="./js/search.js"></script>
