@@ -115,14 +115,22 @@ input:focus {
 .resultContainer {
     position: relative;
     display: block;
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100px;
     border-bottom: 1px solid lightgray;
+}
+
+.resultContainer:hover {
+    background-color: #FAFAFA;
 }
 
 .resultNameContainer {
     font-size: 17px;
     margin-top: 10px;
+}
+.resultNameContainer:focus {
+    outline: 0px solid transparent;
+    background-color: #F3F3F3;
 }
 
 .lanlatContainer {
@@ -132,7 +140,7 @@ input:focus {
     width: 200px;
     font-size: 13px;
     bottom: 10px;
-    left: 0;
+    left: 0px;
 }
 .latHeader,
 .lonHeader {
@@ -150,7 +158,9 @@ input:focus {
     display: relative;
     width: 100%;
     bottom: 10px;
-    right: 10px;
+    right: 0px;
+    left: 0px;
+    margin: auto;
 }
 
 .addDistrictButtonContainer,
@@ -228,7 +238,9 @@ input:focus {
     position: absolute;
     display: block;
     height: 30px;
-    width: 200px;
+    width: 275px;
+    padding-left: 10px;
+    border-right: 20px solid rgba(255,255,255,0);
     bottom: 10px;
     left: 10px;
     background-color: rgba(255,255,255,0.85);
@@ -238,12 +250,26 @@ input:focus {
     position: absolute;
     display: block;
     width: 100%;
-    height: 20px;
+    height: 15px;
     top: 0;
     bottom: 0;
     margin: auto;
     text-align: center;
 }
+#lonDisplay,
+#latDisplay {
+    position: relative;
+    display: inline-block;
+    width: 140px;
+    font-size: 15px;
+}
+#latDisplay {
+    float: left;
+}
+#lonDisplay {
+    float: right;
+}
+
 #mapZoomDisplayContainer {
     position: absolute;
     display: block;
