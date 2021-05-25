@@ -90,11 +90,19 @@ class Mapping {
         this.map.on('moveend', this.getLonLatMap);
     }
 
-    public addEventDisplayDefaultDistrict(elementName:string) {
+    public addEventDisplayDefaultDistrict(elementName:string, attributeLat:string, attributeLon:string):void {
+        // dragging map
         this.map.on('pointerdrag', () => this.displayDefaultElement(elementName));
-        this.map.on('pointerdrag', () => this.updateDefaultElement(elementName));
+        this.map.on('pointerdrag', () => this.updateDefaultElement(elementName, attributeLat, attributeLon));
+        // scroll + scroll movement on map
+        this.map.on('moveend', () => this.updateDefaultElement(elementName, attributeLat, attributeLon));
+    }
+
+    public addEventDisplayMapLonLat(elementName:string):void {
         // mouse wheel scroll up or down
-        //this.map.on('wheel', () => this.displayZoom(view, mapZoomDisplay));
+        this.map.on('pointerdrag', () => this.updateDisplayDefaultElement(elementName));
+        // scroll + scroll movement on map
+        this.map.on('moveend', () => this.updateDisplayDefaultElement(elementName));
     }
 
 
@@ -114,6 +122,17 @@ class Mapping {
         document.getElementsByClassName('ol-zoom-out')[0].addEventListener('click', () => this.displayZoom(view, mapZoomDisplay));
     }
 
+    private updateDisplayDefaultElement(elementName:string):void {
+        // @ts-ignore
+        let lonlat:number[] = ol.proj.toLonLat(this.view.getCenter());
+        let display:HTMLElement = document.getElementById(elementName) as HTMLElement;
+
+        // update the latitude display on the default district
+        (display.children[0] as HTMLElement).innerText = lonlat[0].toString();
+        
+        // update the longitude display on the default district
+        (display.children[1] as HTMLElement).innerText = lonlat[1].toString();
+    }
     
 
     /**
@@ -166,26 +185,31 @@ class Mapping {
      * @param           elementName name of the DOM element
      * @returns         {void}
      */
-    private updateDefaultElement(elementName: string):void {
+    private updateDefaultElement(elementName: string, attributeLat:string, attributeLon:string):void {
         // @ts-ignore
         let lonlat:number[] = ol.proj.toLonLat(this.view.getCenter());
+        let defaultElement: HTMLElement = document.getElementsByClassName(elementName)[0] as HTMLElement;
 
         // update the latitude display on the default district
         (document.getElementsByClassName(elementName)[0].children[2].children[0].children[1] as HTMLElement).innerText = lonlat[1].toString();
         
         // update the longitude display on the default district
         (document.getElementsByClassName(elementName)[0].children[2].children[1].children[1] as HTMLElement).innerText = lonlat[0].toString();
+
+        defaultElement.setAttribute(attributeLat, lonlat[1].toString());
+        defaultElement.setAttribute(attributeLon, lonlat[0].toString());
     }
     
     public setDisplayDefaultElementLonLat(elementName: string):void  {
         // @ts-ignore
         let lonlat:number[] = ol.proj.toLonLat(this.view.getCenter());
+        let defaultElement: HTMLElement = document.getElementsByClassName(elementName)[0] as HTMLElement;
 
         // update the latitude display on the default district
-        (document.getElementsByClassName(elementName)[0].children[2].children[0].children[1] as HTMLElement).innerText = lonlat[1].toString();
+        (defaultElement.children[2].children[0].children[1] as HTMLElement).innerText = lonlat[1].toString();
 
         // update the longitude display on the default district
-        (document.getElementsByClassName(elementName)[0].children[2].children[1].children[1] as HTMLElement).innerText = lonlat[0].toString();
+        (defaultElement.children[2].children[1].children[1] as HTMLElement).innerText = lonlat[0].toString();
     }
 
     /**

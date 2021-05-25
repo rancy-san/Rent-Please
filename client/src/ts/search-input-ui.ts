@@ -19,7 +19,7 @@ class SearchInputUI extends SearchUI {
      */
     constructor(searchListUX: SearchListUX) {
         // run parent class constructor
-        super();
+        super(); 
         // retrieve and store DOM elements
         // search button
         let searchButton: HTMLElement = document.getElementById('searchIcon') as HTMLElement;

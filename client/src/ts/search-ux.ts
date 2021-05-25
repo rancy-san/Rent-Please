@@ -60,9 +60,8 @@ abstract class SearchUX {
      * @returns         {any}
      */
     public clearList(listElement: HTMLElement) {
-        //console.log(listElement.children[0]);
-        //let tempElement:HTMLElement = listElement.children[0] as HTMLElement;
+        let tempElement:HTMLElement = listElement.children[0] as HTMLElement;
         listElement.innerHTML = "";
-        //listElement.appendChild(tempElement);
+        listElement.appendChild(tempElement);
     }
 }

@@ -20,7 +20,7 @@ class SearchListUI extends SearchUI {
         // @ts-ignore
         lonlat = ol.proj.toLonLat(this.searchListUX.getView().getCenter());
         // default container
-        this.createResultContainer("Custom District", lonlat[0], lonlat[1], true);
+        this.createResultContainer("Custom District", 0, 0, true);
     }
 
     /**
@@ -66,13 +66,14 @@ class SearchListUI extends SearchUI {
         resultNameContainer.innerText = districtName;
         resultNameContainer.contentEditable = "true";
 
-        // store some data on the DOM
-        resultContainer.setAttribute("data-districtName", districtName);
-        resultContainer.setAttribute("data-districtLat", districtLat.toString());
-        resultContainer.setAttribute("data-districtLon", districtLon.toString());
 
         
         if (!isDefaultItem) {
+            // store some data on the DOM
+            resultContainer.setAttribute("data-districtName", districtName);
+            resultContainer.setAttribute("data-districtLat", districtLat.toString());
+            resultContainer.setAttribute("data-districtLon", districtLon.toString());
+
             // add an event that adds data to the other list
             this.searchListUX.addEventAppendToPrepareData(
                 addDistrictButtonContainer,

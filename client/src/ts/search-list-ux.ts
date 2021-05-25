@@ -155,11 +155,8 @@ class SearchListUX extends SearchUX {
         // re-add events
         this.addEventAppendDefaultElementToPrepareData(addButton, removeButton, defaultItem, listElementData, listElementResults);
         
-        //this.addEventAppendToPrepareData(addButton, removeButton, elementResult, listElementData, listElementResults, defaultLongitude, defaultLatitude);
-        
-        
         this.addEventRemoveFromPrepareData(removeButton, defaultItem);
-        this.addEventUpdateLonLat(geolocateButton, defaultLongitude, defaultLatitude);
+        this.addEventUpdateDefaultElementLonLat(geolocateButton, defaultItem);
         
         defaultItem.style.display = "none";
 
@@ -174,10 +171,11 @@ class SearchListUX extends SearchUX {
         // get bounding box after lonlat update
         elementResult.setAttribute("data-boundingBox", this.getBoundingBox().toString());
  
-        // clear list
-        this.clearList(listElementResults);
 
         listElementResults.insertBefore(defaultItem, listElementResults.firstChild);
+
+        // clear list
+        this.clearList(listElementResults);
     }
 
     /**
@@ -188,8 +186,6 @@ class SearchListUX extends SearchUX {
      * @return          {void}
      */
     private updateLonLat(longitude: number, latitude: number): void {
-        // @ts-ignore
-        console.log(ol.proj.fromLonLat([longitude, latitude]));
         // @ts-ignore
         this.view.centerOn(ol.proj.fromLonLat([longitude, latitude]), this.map.getSize(), [(this.map.getSize()[0] / 2), this.map.getSize()[1] / 2]);
     }
