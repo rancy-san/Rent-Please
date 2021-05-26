@@ -165,8 +165,9 @@ class SearchListUX extends SearchUX {
         buttonRemoveElement.style.display = "block";
         // add list item to the list
         listElementData.appendChild(elementResult);
- 
- 
+        // set name back to default
+        (defaultItem.children[0] as HTMLElement).innerText = "Custom District";
+
          
         // get bounding box after lonlat update
         elementResult.setAttribute("data-boundingBox", this.getBoundingBox().toString());

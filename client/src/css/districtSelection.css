@@ -116,7 +116,7 @@ input:focus {
     position: relative;
     display: block;
     width: calc(100% - 10px);
-    height: 100px;
+    height: 125px;
     border-bottom: 1px solid lightgray;
 }
 
