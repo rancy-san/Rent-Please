@@ -27,11 +27,26 @@
             "property_room_container": "Floorplan_floorplanColumn",
             "property_room_type": "Floorplan_floorplanTitle",
             "property_room_type_check": "Floorplan_availabilityCount",
-            "property_sqft": "Floorplan_sqft",
+            "property_floor": "Floorplan_sqft",
             "property_bath": "Floorplan_bath",
             "property_cost": "Floorplan_floorplanPrice",
+            "property_cost_default": "BubbleDetail_colPrice",
+            "property_basic_icon_default": "BubbleDetail_colSummaryIcon",
+            "property_basic_tag_default": "PropertyBadge_propertyBadge",
             "property_amenity_container": "row p-no-gutter Amenities_amenities",
             "property_amenity": "Amenities_amenityContainer"
+        },
+        "selector_inner_data": {
+            "room_count_icon":"bed",
+            "bathroom_count_icon":"bath",
+            "dogs1_allowed_icon":"dog-solid",
+            "dogs2_allowed_icon":"dog",
+            "cats_allowed_icon":"cat",
+            "floor_size_icon":"Fill 1",
+            "pets_allowed_tag":"PET FRIENDLY",
+            "dogs_allowed_tag":"DOG FRIENDLY",
+            "cats_allowed_tag":"CAT FRIENDLY",
+            "lease_length_tag":"Short stay"
         },
         "object": {
             "property_name":"building_name",
