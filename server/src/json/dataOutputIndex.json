@@ -1,0 +1,12 @@
+{
+    "XLSX": {
+        "p": [
+            "District","Rental Cost ($CAD)","Address","Property Type","Bedroom Count","Bathroom Count","Floor (sqft)","Lease Length","Air Conditioning (In-Unit Amenity)","Assigned Parking (In-Unit Amenity)","Balcony (In-Unit Amenity)","Carpet (In-Unit Amenity)","Ceiling Fan (In-Unit Amenity)","Central Heat (In-Unit Amenity)","Deck (In-Unit Amenity)","Dishwasher (In-Unit Amenity)","Fireplace (In-Unit Amenity)","Furnished (In-Unit Amenity)","Garden (In-Unit Amenity)","Hardwood Floor (In-Unit Amenity)","High Ceilings (In-Unit Amenity)","In Unit Laundry (In-Unit Amenity)","Leed Certified (In-Unit Amenity)","Leed Gold (In-Unit Amenity)","Leed Platinum (In-Unit Amenity)","Leed Silver (In-Unit Amenity)","On Site Laundry (In-Unit Amenity)","Walk In Closet (In-Unit Amenity)","Business Center (Building Amenity)","Concierge Service (Building Amenity)","Controlled Access (Building Amenity)","Door Person (Building Amenity)","Dry Cleaning Service (Building Amenity)","Elevator (Building Amenity)","Fitness Center (Building Amenity)","Garage Parking (Building Amenity)"," (Building Amenity)Leed Certified","Leed Gold (Building Amenity)","Leed Platinum (Building Amenity)","Leed Silver (Building Amenity)","Onsite Management (Building Amenity)","On Site Laundry (Building Amenity)","Outdoor Space (Building Amenity)","Package Service (Building Amenity)","Residents Lounge (Building Amenity)","Roof Deck (Building Amenity)","Storage (Building Amenity)","Swimming Pool (Building Amenity)","Wheelchair Accessible (Building Amenity)","Cats Allowed","Dogs Allowed"
+        ]
+    },
+    "ARFF": {
+        "p": {
+
+        }
+    }
+}
