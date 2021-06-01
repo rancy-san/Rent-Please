@@ -8,6 +8,7 @@
  * 
  */
 
+const Server = require('./server')
  // fetch class RentPlease for later instantiation
 const RentPlease = require('./rentPlease');
 
@@ -57,6 +58,12 @@ class Main {
                     let rentPlease:any = new RentPlease();
                     // start collecting available neighbourhood data
                     rentPlease.updateDistrictList();
+                    break;
+                }
+                case "start": {
+                    let server: any = new Server();
+                    //server.listenForClientGenerateReport();
+                    server.startServer();
                     break;
                 }
                 default: {
