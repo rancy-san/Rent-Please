@@ -1,19 +1,21 @@
-const AbstractTarget = require('./target');
+const CrawlTarget = require('./target');
 const Sys = require("../../tools/system/system");
 
 
-class Padmapper extends AbstractTarget {
+class Padmapper extends CrawlTarget {
     private browser: any;
     private targetURL: string;
     private rentalType: object;
     private districtList: object;
     private selectorList: object;
-    private objectList: object;
+    private selectorInnerDataList: object;
     private rentalData: object;
 
+
+
     /**
-     * Function Name:   search
-     * Description:     Scan rental web application for properties in the area/district 
+     * @function        search
+     * @description     Scan rental web application for properties in the area/district 
      */
     public async search() {
         let districtRegion: string[] = this.districtList['region'];
@@ -25,14 +27,18 @@ class Padmapper extends AbstractTarget {
         await this.firstPass(districtRegion, districtProvince, buildingData, parameterPropertyCategories, parameterExcludeAirBnB);
     }
 
+    public async getRentalData(): Promise<object> {
+        return this.rentalData;
+    }
+
     /**
-     * Function Name:   firstPass
-     * Description:     Scans and collects information for all rental properties for all districts
-     * @param {string[]} districtRegion array of districts or regions
-     * @param {string} districtProvince province code for the district
-     * @param {string[]} buildingData types of buildings stored in an array
-     * @param {string} parameterPropertyCategories types of properties
-     * @param {string} parameterExcludeAirBnB no airBnB
+     * @function        firstPass
+     * @description     Scans and collects information for all rental properties for all districts
+     * @param           {string[]} districtRegion array of districts or regions
+     * @param           {string} districtProvince province code for the district
+     * @param           {string[]} buildingData types of buildings stored in an array
+     * @param           {string} parameterPropertyCategories types of properties
+     * @param           {string} parameterExcludeAirBnB no airBnB
      */
     private async firstPass(
         districtRegion: string[],
@@ -59,9 +65,9 @@ class Padmapper extends AbstractTarget {
         parameterExcludeAirBnB: string,
         passType: number
     ) {
-        let tempDistrictProvinceLength:number = districtProvince.length;
+        let tempDistrictProvinceLength: number = districtProvince.length;
         // number of districts to iterate over
-        let tempDistrictRegionLength:number;
+        let tempDistrictRegionLength: number;
         // parameters for the targetURL
         let paramDistrict: string;
         // set URL from the global variable
@@ -82,7 +88,7 @@ class Padmapper extends AbstractTarget {
                 paramDistrict = paramDistrict.toLowerCase();
                 tempBuildingDataLength = buildingData.length;
 
-                console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
+                //console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
 
                 while (tempBuildingDataLength--) {
                     // go to target site
@@ -103,13 +109,13 @@ class Padmapper extends AbstractTarget {
                         }
                     }
 
-                    console.log("Building type: " + buildingData[tempBuildingDataLength]);
+                    //console.log("Building type: " + buildingData[tempBuildingDataLength]);
                     await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
 
-                    console.log("\r\n");
+                    //console.log("\r\n");
                 }
 
-                console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
+                //console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
             }
         }
     }
@@ -146,14 +152,14 @@ class Padmapper extends AbstractTarget {
             // go back
             await elementBackBtn[0].click();
         }
-        console.log(this.rentalData);
+        //console.log(this.rentalData);
     }
 
     private async cycleThroughPropertyWrapper(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number) {
         let rentalPropertyWrapper: HTMLElement[];
         let rentalPropertyWrapperLength: number;
         let selectorRoomWrapper: string = '*[class*=\"' + this.selectorList['property_room_wrapper'] + '\"]';
-        let selectorError:boolean;
+        let selectorError: boolean;
 
         try {
             // wait for list of rooms to appear
@@ -164,7 +170,7 @@ class Padmapper extends AbstractTarget {
             this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, null));
             selectorError = true;
         }
-        if(!selectorError) {
+        if (!selectorError) {
             // get list of rooms
             rentalPropertyWrapper = await targetPage.$$(selectorRoomWrapper);
 
@@ -194,7 +200,7 @@ class Padmapper extends AbstractTarget {
                 }
             }
         }
-        console.log(this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property']);
+        //console.log(this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property']);
     }
 
     private async cycleThroughPropertyContainer(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number, rentalPropertyWrapperLength: number) {
@@ -209,9 +215,11 @@ class Padmapper extends AbstractTarget {
         rentalPropertyRoomContainerLength = rentalPropertyRoomContainer.length;
 
         while (rentalPropertyRoomContainerLength--) {
+            /*
             await targetPage.evaluate((selectorRoomContainer, rentalPropertyRoomContainerLength) => {
                 return document.querySelectorAll(selectorRoomContainer)[rentalPropertyRoomContainerLength].children[1].children[0].children[0].children[0].children[0].innerText;
             }, selectorRoomContainer, rentalPropertyRoomContainerLength);
+            */
             // store basic info and all amenities of each available suite
             this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer[rentalPropertyRoomContainerLength]));
         }
@@ -227,62 +235,158 @@ class Padmapper extends AbstractTarget {
     }
 
     private async getPropertyDataBasicInformation(targetPage: any, propertyLength: number, rentalPropertyWrapperLength: number, rentalPropertyRoomContainer: HTMLElement) {
-        let basicInformation = {};
-        
+        let basicInformation: object = {};
+
         // property name
         basicInformation['building_name'] = await this.getPropertyName(targetPage, propertyLength);
         // property address
         basicInformation['building_address'] = await this.getPropertyAddress(targetPage, propertyLength);
         // building postal code
         basicInformation['building_postal_code'] = await this.getPropertyPostalCode(targetPage, propertyLength);
+        // store building type
+        basicInformation['building_type'] = await this.getPropertyBuildingType(targetPage);
 
         // if not null, get data like usual
         if (rentalPropertyRoomContainer) {
-            // store building type
-            basicInformation['building_type'] = await this.getPropertyBuildingType(targetPage);
-
-            // number of rooms
-            basicInformation['room'] = await this.getPropertyRoomType(targetPage, rentalPropertyRoomContainer);
             // rent price
-            basicInformation['cost'] = await this.getPropertyCost(targetPage, rentalPropertyRoomContainer);
+            basicInformation['rental_cost'] = await this.getPropertyCost(targetPage, rentalPropertyRoomContainer);
+            // number of rooms
+            basicInformation['bedroom_count'] = await this.getPropertyRoomType(targetPage, rentalPropertyRoomContainer);
             // size of suite
-            basicInformation['sqft'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
+            basicInformation['floor'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
             // number of bathroom
-            basicInformation['bathroom'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
+            basicInformation['bathroom_count'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
+        }
+        basicInformation = await this.getPropertyIconInformationDefault(targetPage, basicInformation);
+        basicInformation = await this.getPropertyTagInformationDefault(targetPage, basicInformation);
+
+
+        return basicInformation;
+    }
+
+    private async getPropertyTagInformationDefault(targetPage: any, basicInformation: object): Promise<object> {
+
+        let selectorTagContainer: string = '*[class*=\"' + this.selectorList['property_basic_tag_default'] + '\"]';
+        let tagContainer: HTMLElement[] = await targetPage.$$(selectorTagContainer);
+        let tagContainerLength: number = tagContainer.length;
+
+        try {
+            // default data unless otherwise indicated by the rental listing
+            basicInformation['lease_length'] = "Long";
+            basicInformation['dogs_allowed'] = "NO";
+            basicInformation['cats_allowed'] = "NO";
+
+            await targetPage.waitForSelector(selectorTagContainer, { timeout: 500 });
+
+            while (tagContainerLength--) {
+                let tempTagContainer: HTMLElement = tagContainer[tagContainerLength];
+                let tagContainerText: string = await targetPage.evaluate((tempTagContainer) => {
+                    return tempTagContainer.innerText;
+                }, tempTagContainer);
+
+                // default inputs before obtainining data
+                if (!basicInformation['lease_length']) {
+                    if (tagContainerText == this.selectorInnerDataList['lease_length_tag']) {
+                        basicInformation['lease_length'] = "Short";
+                    }
+                }
+                if (!basicInformation['dogs_allowed'] && !basicInformation['cats_allowed']) {
+                    if (tagContainerText == this.selectorInnerDataList['pets_allowed_tag']) {
+                        basicInformation['dogs_allowed'] = "YES";
+                        basicInformation['cats_allowed'] = "YES";
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+        return basicInformation;
+    }
+
+    private async getPropertyIconInformationDefault(targetPage: any, basicInformation: object): Promise<object> {
+
+        let selectorIconContainer: string = '*[class*=\"' + this.selectorList['property_basic_icon_default'] + '\"]';
+        let iconContainer: HTMLElement[] = await targetPage.$$(selectorIconContainer);
+        let iconContainerLength: number = iconContainer.length;
+
+        try {
+            await targetPage.waitForSelector(selectorIconContainer, { timeout: 500 });
+
+            while (iconContainerLength--) {
+                let tempIconContainer: HTMLElement = iconContainer[iconContainerLength];
+                let iconContainerText: string = await targetPage.evaluate((tempIconContainer: HTMLElement) => {
+                    return tempIconContainer.innerText;
+                }, tempIconContainer);
+                let iconContainerSVGText: string = await targetPage.evaluate((tempIconContainer: HTMLElement) => {
+                    return tempIconContainer.getElementsByTagName("svg")[0].getElementsByTagName("title")[0].innerHTML.toString();
+                }, tempIconContainer);
+
+                switch (iconContainerSVGText) {
+                    case this.selectorInnerDataList['room_count_icon']: {
+                        basicInformation['bedroom_count'] = iconContainerText.replace(/[^0-9]/g, '');
+                        break;
+                    }
+                    case this.selectorInnerDataList['bathroom_count_icon']: {
+                        basicInformation['bathroom_count'] = iconContainerText.replace(/[^0-9]/g, '');
+                        break;
+                    }
+                    case this.selectorInnerDataList['floor_size_icon']: {
+                        basicInformation['floor'] = iconContainerText.replace(/[^0-9]/g, '');
+                        break;
+                    }
+                    case this.selectorInnerDataList['dogs1_allowed_icon']: {
+                        if (iconContainerText != "NO INFO")
+                            basicInformation['dogs_allowed'] = iconContainerText;
+                        break;
+                    }
+                    case this.selectorInnerDataList['dogs2_allowed_icon']: {
+                        if (iconContainerText != "NO INFO")
+                            basicInformation['dogs_allowed'] = iconContainerText;
+                        break;
+                    }
+                    case this.selectorInnerDataList['cats_allowed_icon']: {
+                        if (iconContainerText != "NO INFO")
+                            basicInformation['cats_allowed'] = iconContainerText;
+                        break;
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
         }
 
 
         return basicInformation;
     }
 
-    private async getPropertyDataAmenities(targetPage:any, amenityType:string) {
-        let amenity:string[] = [];
-        let selectorAmenityContainer:string = '*[class*=\"' + this.selectorList['property_amenity_container'] + '\"]';
-        let amenityContainer:HTMLElement[] = await targetPage.$$(selectorAmenityContainer);
-        let amenityContainerLength:number = amenityContainer.length;
+    private async getPropertyDataAmenities(targetPage: any, amenityType: string) {
+        let amenity: string[] = [];
+        let selectorAmenityContainer: string = '*[class*=\"' + this.selectorList['property_amenity_container'] + '\"]';
+        let amenityContainer: HTMLElement[] = await targetPage.$$(selectorAmenityContainer);
+        let amenityContainerLength: number = amenityContainer.length;
 
         try {
             await targetPage.waitForSelector(selectorAmenityContainer, { timeout: 500 });
 
             // cycle through either apartment or building or both amenity types
             while (amenityContainerLength--) {
-                let tempAmenityContainer:HTMLElement = amenityContainer[amenityContainerLength];
+                let tempAmenityContainer: HTMLElement = amenityContainer[amenityContainerLength];
 
-                let amenityText:string = await targetPage.evaluate((tempAmenityContainer) => {
+                let amenityText: string = await targetPage.evaluate((tempAmenityContainer) => {
                     return tempAmenityContainer.innerText;
                 }, tempAmenityContainer);
 
                 if (amenityText.toLowerCase().includes(amenityType.toLowerCase())) {
-                    
+
                     let selectorAmenity: string = '*[class*=\"' + this.selectorList['property_amenity'] + '\"]';
-                    let amenityLength: number = await targetPage.evaluate((selectorAmenityContainer:string, amenityContainerLength:number, selectorAmenity:string) => {
+                    let amenityLength: number = await targetPage.evaluate((selectorAmenityContainer: string, amenityContainerLength: number, selectorAmenity: string) => {
                         return document.querySelectorAll(selectorAmenityContainer)[amenityContainerLength].querySelectorAll(selectorAmenity).length;
                     }, selectorAmenityContainer, amenityContainerLength, selectorAmenity);
 
-                    amenity = await targetPage.evaluate((selectorAmenityContainer:string, amenityContainerLength:number, selectorAmenity:string, amenityLength:number) => {
-                        let tempAmenity:string[] = [];
-                        while(amenityLength--) {
-                            let tempAmenityValue:string = (document.querySelectorAll(selectorAmenityContainer)[amenityContainerLength].querySelectorAll(selectorAmenity)[amenityLength] as HTMLElement).innerText;
+                    amenity = await targetPage.evaluate((selectorAmenityContainer: string, amenityContainerLength: number, selectorAmenity: string, amenityLength: number) => {
+                        let tempAmenity: string[] = [];
+                        while (amenityLength--) {
+                            let tempAmenityValue: string = (document.querySelectorAll(selectorAmenityContainer)[amenityContainerLength].querySelectorAll(selectorAmenity)[amenityLength] as HTMLElement).innerText;
                             tempAmenity.push(tempAmenityValue);
                         }
                         return tempAmenity;
@@ -364,7 +468,7 @@ class Padmapper extends AbstractTarget {
         }, selector);
     }
 
-    private async getPropertyAttribute(targetPage: any, propertyLength: number, attributeValue:string) {
+    private async getPropertyAttribute(targetPage: any, propertyLength: number, attributeValue: string) {
         let selector: string = '*[class*=\"' + this.selectorList['property_container'] + '\"]';
         let attribute: string = '[itemprop=' + attributeValue + ']';
 
@@ -414,9 +518,14 @@ class Padmapper extends AbstractTarget {
     private async getPropertyRoomType(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
         let selector: string = '*[class*=\"' + this.selectorList['property_room_type'] + '\"]';
         try {
-            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            let tempData: string = await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText.replace(/[^0-9]/g, '');
             }, rentalPropertyRoomContainer, selector);
+
+            if (tempData === "")
+                return "—";
+            else
+                return tempData;
 
         } catch {
             return "—";
@@ -424,12 +533,17 @@ class Padmapper extends AbstractTarget {
     }
 
     private async getPropertySize(targetPage: any, rentalPropertyRoomContainer: HTMLElement) {
-        let selector: string = '*[class*=\"' + this.selectorList['property_sqft'] + '\"]';
+        let selector: string = '*[class*=\"' + this.selectorList['property_floor'] + '\"]';
 
         try {
-            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            let tempData: string = await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText.replace(/[^0-9]/g, '');
             }, rentalPropertyRoomContainer, selector);
+
+            if (tempData === "")
+                return "—";
+            else
+                return tempData;
         } catch {
             return "—";
         }
@@ -439,9 +553,14 @@ class Padmapper extends AbstractTarget {
         let selector: string = '*[class*=\"' + this.selectorList['property_bath'] + '\"]';
 
         try {
-            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            let tempData: string = await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText.replace(/[^0-9]/g, '');
             }, rentalPropertyRoomContainer, selector);
+
+            if (tempData === "")
+                return "—";
+            else
+                return tempData;
         } catch {
             return "—";
         }
@@ -451,9 +570,14 @@ class Padmapper extends AbstractTarget {
         let selector: string = '*[class*=\"' + this.selectorList['property_cost'] + '\"]';
 
         try {
-            return await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
-                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText;
+            let tempData: string = await targetPage.evaluate((rentalPropertyRoomContainer, selector) => {
+                return rentalPropertyRoomContainer.querySelectorAll(selector)[0].innerText.replace(/[^0-9]/g, '');
             }, rentalPropertyRoomContainer, selector);
+
+            if (tempData === "")
+                return "—";
+            else
+                return tempData;
         } catch {
             return "—";
         }

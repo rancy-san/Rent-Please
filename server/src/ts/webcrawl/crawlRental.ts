@@ -51,6 +51,12 @@ class CrawlRental {
         eval("this."+rentalConfig[target].crawl_function);
     }
 
+    /**
+     * @function        webCrawl_p
+     * @description     webCrawl_p is for webCrawl_PadMapper
+     * @param           browser 
+     * @param           targetURL 
+     */
     private async webCrawl_p(browser:any, targetURL:string) {
         // get Class for padmapper web crawling
         const Padmapper = require('./target/padmapper');
@@ -59,8 +65,11 @@ class CrawlRental {
         let selectorList:object = rentalConfig[this.target].selector;
         let objectList:object = rentalConfig[this.target].object;
         let attributeList:object = rentalConfig[this.target].attribute;
-        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList, attributeList);
+        let selectorInnerDataList:object = rentalConfig[this.target].selector_inner_data;
+
+        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList, attributeList, selectorInnerDataList);
         await padmapper.search();
+        console.log(JSON.stringify(await padmapper.getRentalData(), null, 2));
     }
 
 }
