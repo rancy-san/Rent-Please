@@ -5,13 +5,14 @@
  *                   
  */
 // web crawling library
-import * as puppeteer from 'puppeteer';
+const puppeteer = require("puppeteer");
 // get information for properties of available rental web applications
 const rentalConfig = require("../../json/rentalConfig.json");
 // web crawling configuration information
 const browserConfig = require("../../json/browserConfig.json");
 // list of regions to scan
 const districtList = require("../../json/district.json");
+
 
 class CrawlRental {
     // command line argument representing the target rental web application
@@ -20,13 +21,16 @@ class CrawlRental {
     private targetURL:string;
     // browser for web crawling
     private browser:any;
+    // rental data after crawling
+    private rentalData: object;
+    private resolve?:any;
 
     constructor(arg:string) {
         this.target = arg;
         
     }
 
-    public crawl():void {
+    public async crawl(resolve?:any) {
         (async () => {
             this.targetURL = await this.getTargetURL(this.target);
             this.browser = await puppeteer.launch({
@@ -40,6 +44,7 @@ class CrawlRental {
             });
 
             await this.execTargetFunc(this.target);
+            this.resolve = resolve;
         })();
     }
 
@@ -69,8 +74,16 @@ class CrawlRental {
 
         let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList, attributeList, selectorInnerDataList);
         await padmapper.search();
-        console.log(JSON.stringify(await padmapper.getRentalData(), null, 2));
+        await padmapper.getRentalData()
+        this.rentalData = await padmapper.getRentalData();
+        await this.browser.close();
+        await this.resolve();
+        //JSON.stringify(this.getRentalData(), null, 2);
     }
+
+    public getRentalData():object {
+        return this.rentalData;
+    } 
 
 }
 

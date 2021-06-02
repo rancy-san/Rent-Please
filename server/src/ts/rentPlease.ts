@@ -9,6 +9,7 @@
 // Web crawling class
 const CrawlRental = require('./webcrawl/crawlRental');
 const DistrictScan = require('./tools/wiki_scan/districtScan');
+const CSVOut = require('./tools/data_output/csvOut');
 
 export class RentPlease {
     // holds the crawlRental class to webcrawl rental web applications
@@ -32,8 +33,8 @@ export class RentPlease {
      *                  set during initializtion of the CrawlRental object 
      *                  in the constructor.
      */
-    public seekRental(): void {
-        this.crawlRental.crawl();
+    public async seekRental(resolve?:any) {
+        await this.crawlRental.crawl(resolve);
         return;
     }
 
@@ -47,9 +48,16 @@ export class RentPlease {
         */
     }
 
-    private buildRentalNetwork(): void { }
-    private sortRental(): void { }
-    private filterRental(): void { }
+    public async createDistrictDataOutput(resolve?:any, arg?:string) {
+        await console.log(JSON.stringify(this.crawlRental.getRentalData()));
+        /*
+        let csvOut: typeof CSVOut;
+        let districtData: object;
+        districtData = await this.crawlRental.getRentalData();
+        csvOut = await new CSVOut(arg);
+        */
+        resolve();
+    }
 }
 
 module.exports = RentPlease;

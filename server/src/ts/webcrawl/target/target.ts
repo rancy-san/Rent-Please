@@ -27,7 +27,7 @@ abstract class Target {
 
     private async populateRentalData() {
         let districtList = this.districtList['region'];
-        let tempDistrictLength = districtList.length;
+        let tempDistrictLength:number = districtList.length;
         while (tempDistrictLength--) {
             this.rentalData[districtList[tempDistrictLength]] = {};
         }

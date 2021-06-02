@@ -1,3 +1,4 @@
+
 // import expressJS
 const express = require('express');
 // initialize expressJS
@@ -10,8 +11,14 @@ const os = require('os');
 const cors = require('cors');
 // import library that gets server's IPv4 address
 const localIpV4Address = require("local-ipv4-address");
+// fetch class RentPlease for later instantiation
+const RentPlease = require('./rentPlease');
 
 export class Server {
+    
+    // begin the Rent, Please! application through instantiating the class
+    private rentPlease:any;
+
     constructor() {
         // allow Cross Origin Requests
         app.use(cors());
@@ -41,16 +48,15 @@ export class Server {
     }
 
     public async generateReport(res) {
-        return new Promise<void>(resolve => setTimeout(function() {
-            console.log(1);
-            resolve();
-        }, 500)).then(()=> {
-
-            return new Promise<void>(resolve => setTimeout(function() {
-                console.log(2);
-                resolve();
-            }, 1000));
+        return new Promise<void>(async resolve => await this.seekRental(resolve)).then(()=> {
+            return new Promise<void>(async resolve => await this.rentPlease.createDistrictDataOutput(resolve, 'p'));
         });
+    }
+
+    private async seekRental(resolve:any) {
+        this.rentPlease = await new RentPlease('p');
+        // run web crawling
+        await this.rentPlease.seekRental(resolve);
     }
 }
 

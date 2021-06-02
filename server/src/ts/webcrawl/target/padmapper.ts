@@ -51,11 +51,6 @@ class Padmapper extends CrawlTarget {
         await this.basicPass(targetPage, districtRegion, districtProvince, buildingData, parameterPropertyCategories, parameterExcludeAirBnB, 1);
     }
 
-    private async secondPass() {
-        // similar to firstPass()
-        // loop through districts but with map view to aggregate similar data
-    }
-
     private async basicPass(
         targetPage: any,
         districtRegion: string[],
@@ -88,8 +83,6 @@ class Padmapper extends CrawlTarget {
                 paramDistrict = paramDistrict.toLowerCase();
                 tempBuildingDataLength = buildingData.length;
 
-                //console.log("Working on region... " + districtRegion[tempDistrictRegionLength]);
-
                 while (tempBuildingDataLength--) {
                     // go to target site
                     tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB;
@@ -108,14 +101,9 @@ class Padmapper extends CrawlTarget {
                             await elementMapBtn[0].click();
                         }
                     }
-
-                    //console.log("Building type: " + buildingData[tempBuildingDataLength]);
                     await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
 
-                    //console.log("\r\n");
                 }
-
-                //console.log(this.rentalData[districtRegion[tempDistrictRegionLength]]);
             }
         }
     }
@@ -152,7 +140,6 @@ class Padmapper extends CrawlTarget {
             // go back
             await elementBackBtn[0].click();
         }
-        //console.log(this.rentalData);
     }
 
     private async cycleThroughPropertyWrapper(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number) {
@@ -200,7 +187,6 @@ class Padmapper extends CrawlTarget {
                 }
             }
         }
-        //console.log(this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property']);
     }
 
     private async cycleThroughPropertyContainer(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number, rentalPropertyWrapperLength: number) {
@@ -297,9 +283,7 @@ class Padmapper extends CrawlTarget {
                     }
                 }
             }
-        } catch (e) {
-            console.log(e.message);
-        }
+        } catch (e) {}
         return basicInformation;
     }
 
@@ -351,9 +335,7 @@ class Padmapper extends CrawlTarget {
                     }
                 }
             }
-        } catch (e) {
-            console.log(e.message);
-        }
+        } catch (e) {}
 
 
         return basicInformation;

@@ -10,7 +10,7 @@
 
 const Server = require('./server')
  // fetch class RentPlease for later instantiation
-const RentPlease = require('./rentPlease');
+//const RentPlease = require('./rentPlease.js');
 
 class Main {
     // commandline arguments are stored in an array
@@ -34,7 +34,7 @@ class Main {
      *                      run in parallel with itself.
      * @return          {void}
      */
-    public validateArgs():void {
+    public async validateArgs() {
         // strict setting to ensure one command line arugment is sent
         if(this.argsLength > 3) {
             console.log("Error: Too many arguments. Only input 1 argument.");
@@ -48,21 +48,24 @@ class Main {
                 // any previous case will not have "break; 
                 case "p": {
                     // begin the Rent, Please! application through instantiating the class
-                    let rentPlease:any = new RentPlease(arg);
+                    //let rentPlease:any = new RentPlease(arg);
                     // run web crawling
-                    rentPlease.seekRental();                   
+                    /*
+                    await rentPlease.seekRental();
+                    await rentPlease.createDistrictDataOutput();
+                    */
                     break;
                 }
                 // update list of neighbourhoods
                 case "u": {
-                    let rentPlease:any = new RentPlease();
+                    //let rentPlease:any = new RentPlease();
                     // start collecting available neighbourhood data
-                    rentPlease.updateDistrictList();
+                    //rentPlease.updateDistrictList();
                     break;
                 }
                 case "start": {
                     let server: any = new Server();
-                    //server.listenForClientGenerateReport();
+                    server.listenForClientGenerateReport();
                     server.startServer();
                     break;
                 }
