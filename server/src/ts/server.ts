@@ -22,6 +22,9 @@ export class Server {
     constructor() {
         // allow Cross Origin Requests
         app.use(cors());
+        // Express 14.17+ replaces 'body-parser' module
+        app.use(express.json());
+        // listen to request from client
         this.listenForClientGenerateReport();
     }
 
@@ -38,25 +41,30 @@ export class Server {
         });
     }
 
-    public listenForClientGenerateReport() {
+    public async listenForClientGenerateReport() {
         // POST method route
-        app.post('/generateReport', async (req, res) => {
-            await this.generateReport(res).then(()=>{
+        await app.post('/generateReport', async (req, res) => {
+            let clientData:object = req.body;
+            console.log(clientData);
+            
+            /*
+            await this.generateReport(res, clientData).then(()=>{
                 console.log(3);
             });
+            */
         });
     }
 
-    public async generateReport(res) {
-        return new Promise<void>(async resolve => await this.seekRental(resolve)).then(()=> {
+    public async generateReport(res:any, clientData:object) {
+        return new Promise<void>(async (resolve, clientData) => await this.seekRental(resolve, clientData)).then(()=> {
             return new Promise<void>(async resolve => await this.rentPlease.createDistrictDataOutput(resolve, 'p'));
         });
     }
 
-    private async seekRental(resolve:any) {
+    private async seekRental(resolve:any, clientData:object) {
         this.rentPlease = await new RentPlease('p');
         // run web crawling
-        await this.rentPlease.seekRental(resolve);
+        await this.rentPlease.seekRental(resolve, clientData);
     }
 }
 
