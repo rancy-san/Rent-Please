@@ -26,6 +26,7 @@ window.onload = function () {
     let latitude: number = 48.428333;
     // instantiate the Mapping object to being working with the map
     let map: Mapping = new Mapping(longitude, latitude);
+    let generateReportButton:HTMLElement = document.getElementById('generateReportButtonWrapper') as HTMLElement;
 
     // create the Openlayers map
     map.createMap();
@@ -38,9 +39,8 @@ window.onload = function () {
     // replace default text data to make the buttons clearer
     mapZoomOutButton.innerHTML = "<div id='zoomOutButton'>-</div>";
     mapZoomInButton.innerHTML = "<div id='zoomInButton'>+</div>";
-
     client = new Client();
-    client.requestReport();
+    client.addEventGenerateReport(generateReportButton);
 
     // ensure map is loaded before obtaining and setting map data
     if(map.mapLoaded()) {
