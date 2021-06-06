@@ -6,9 +6,6 @@ class Padmapper extends CrawlTarget {
     private browser: any;
     private targetURL: string;
     private rentalType: object;
-    private districtList: object;
-    private selectorList: object;
-    private selectorInnerDataList: object;
     private rentalData: object;
 
 
@@ -18,13 +15,11 @@ class Padmapper extends CrawlTarget {
      * @description     Scan rental web application for properties in the area/district 
      */
     public async search() {
-        let districtRegion: string[] = this.districtList['region'];
-        let districtProvince: string[] = this.districtList['province'];
         let buildingData: string[] = this.rentalType['building'];
         let parameterPropertyCategories: string = this.rentalType['parameter'].property_categories;
         let parameterExcludeAirBnB: string = this.rentalType['parameter'].exclude_airbnb;
 
-        await this.firstPass(districtRegion, districtProvince, buildingData, parameterPropertyCategories, parameterExcludeAirBnB);
+        await this.firstPass(buildingData, parameterPropertyCategories, parameterExcludeAirBnB);
     }
 
     public async getRentalData(): Promise<object> {
@@ -41,30 +36,24 @@ class Padmapper extends CrawlTarget {
      * @param           {string} parameterExcludeAirBnB no airBnB
      */
     private async firstPass(
-        districtRegion: string[],
-        districtProvince: string[],
         buildingData: string[],
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string
     ) {
         let [targetPage]: any = await this.browser.pages();
-        await this.basicPass(targetPage, districtRegion, districtProvince, buildingData, parameterPropertyCategories, parameterExcludeAirBnB, 1);
+        await this.basicPass(targetPage,buildingData, parameterPropertyCategories, parameterExcludeAirBnB, 1);
     }
 
     private async basicPass(
         targetPage: any,
-        districtRegion: string[],
-        districtProvince: string[],
         buildingData: string[],
         parameterPropertyCategories: string,
         parameterExcludeAirBnB: string,
         passType: number
     ) {
-        let tempDistrictProvinceLength: number = districtProvince.length;
-        // number of districts to iterate over
-        let tempDistrictRegionLength: number;
+        let tempClientDataLength: number = this.getDataClientLength();
         // parameters for the targetURL
-        let paramDistrict: string;
+        let paramBBox: string;
         // set URL from the global variable
         let tempTargetURL: string;
         // property URL as an array
@@ -75,40 +64,39 @@ class Padmapper extends CrawlTarget {
         let tempBuildingDataLength: number;
 
         // cycle through province
-        while (tempDistrictProvinceLength--) {
-            tempDistrictRegionLength = districtRegion.length;
-            // cycle through all districts
-            while (tempDistrictRegionLength--) {
-                paramDistrict = '/' + districtRegion[tempDistrictRegionLength].trim().replace(' ', '-') + '-' + districtProvince[tempDistrictProvinceLength];
-                paramDistrict = paramDistrict.toLowerCase();
-                tempBuildingDataLength = buildingData.length;
+        while (tempClientDataLength--) {
+            let key = Object.keys(this.clientData[tempClientDataLength])[0];
+            let value = Object.values(this.clientData[tempClientDataLength])[0];
+            
+            paramBBox = '&box=' + value;
+            
+            tempBuildingDataLength = buildingData.length;
 
-                while (tempBuildingDataLength--) {
-                    // go to target site
-                    tempTargetURL = this.targetURL + paramDistrict + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB;
+            while (tempBuildingDataLength--) {
+                // go to target site
+                tempTargetURL = this.targetURL + parameterPropertyCategories + buildingData[tempBuildingDataLength] + parameterExcludeAirBnB + paramBBox;
 
-                    await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
+                await targetPage.goto(tempTargetURL, { waituntil: 'networkidle2' });
 
-                    await this.checkEndOfPropertyList(targetPage);
+                await this.checkEndOfPropertyList(targetPage);
 
-                    // Map must be turned on for 2nd pass data
-                    if (!await this.checkMapType(targetPage)) {
-                        // show map only if there is no map and passType is 2
-                        if (passType === 2) {
-                            let selector: string = '*[class*=\"' + this.selectorList['map_button'] + '\"]';
-                            let elementMapBtn: HTMLElement[] = await targetPage.$$(selector);
-                            // go back
-                            await elementMapBtn[0].click();
-                        }
+                // Map must be turned on for 2nd pass data
+                if (!await this.checkMapType(targetPage)) {
+                    // show map only if there is no map and passType is 2
+                    if (passType === 2) {
+                        let selector: string = '*[class*=\"' + this.selectorList['map_button'] + '\"]';
+                        let elementMapBtn: HTMLElement[] = await targetPage.$$(selector);
+                        // go back
+                        await elementMapBtn[0].click();
                     }
-                    await this.getRentalPropertyData(targetPage, districtRegion, tempDistrictRegionLength);
-
                 }
+                await this.getRentalPropertyData(targetPage, tempClientDataLength, key, buildingData[tempBuildingDataLength]);
             }
         }
+        //console.log(this.rentalData);
     }
 
-    private async getRentalPropertyData(targetPage: any, districtRegion: object, tempDistrictRegionLength: number) {
+    private async getRentalPropertyData(targetPage: any, tempClientDataLength:number, key:string, buildingType:string) {
         let selectorProperty: string = '*[class*=\"' + this.selectorList['property'] + '\"]';
         let property: HTMLElement[] = await targetPage.$$(selectorProperty);
         let propertyLength: number = property.length;
@@ -127,22 +115,23 @@ class Padmapper extends CrawlTarget {
             await property[propertyLength].click();
             // URL for rental property as JSON key
             propertyURL = await this.getPropertyURL(targetPage);
-            this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL] = { "property": [] };
+            this.rentalData[tempClientDataLength][propertyURL] = { "property": [] };
 
+            
             // loop through the outer element for each room type
-            await this.cycleThroughPropertyWrapper(targetPage, districtRegion, tempDistrictRegionLength, propertyURL, propertyLength);
+            await this.cycleThroughPropertyWrapper(targetPage, tempClientDataLength, propertyURL, propertyLength);
 
-            process.stdout.write("Collecting rental data... " + await system.percentLoaded(propertyTotalCount, propertyLength, 0) + "%\r\033[0G");
-
+            process.stdout.write("Collecting " + key + "'s " + buildingType + " rental data... " + await system.percentLoaded(propertyTotalCount, propertyLength, 0) + "%                          \r\033[0G");
             await targetPage.waitForSelector(selectorBackBtn);
             // load element
             elementBackBtn = await targetPage.$$(selectorBackBtn);
             // go back
             await elementBackBtn[0].click();
+            
         }
     }
 
-    private async cycleThroughPropertyWrapper(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number) {
+    private async cycleThroughPropertyWrapper(targetPage: any, tempClientDataLength: number, propertyURL: string, propertyLength: number) {
         let rentalPropertyWrapper: HTMLElement[];
         let rentalPropertyWrapperLength: number;
         let selectorRoomWrapper: string = '*[class*=\"' + this.selectorList['property_room_wrapper'] + '\"]';
@@ -154,7 +143,7 @@ class Padmapper extends CrawlTarget {
             selectorError = false;
         } catch {
             // take different route if no room type to select
-            this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, null));
+            this.rentalData[tempClientDataLength][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, null));
             selectorError = true;
         }
         if (!selectorError) {
@@ -180,7 +169,7 @@ class Padmapper extends CrawlTarget {
                     await rentalPropertyWrapper[rentalPropertyWrapperLength].click();
 
                     // loop through the room types
-                    await this.cycleThroughPropertyContainer(targetPage, districtRegion, tempDistrictRegionLength, propertyURL, propertyLength, rentalPropertyWrapperLength);
+                    await this.cycleThroughPropertyContainer(targetPage, tempClientDataLength, propertyURL, propertyLength, rentalPropertyWrapperLength);
 
                     // close room type container
                     await rentalPropertyWrapper[rentalPropertyWrapperLength].click();
@@ -189,7 +178,7 @@ class Padmapper extends CrawlTarget {
         }
     }
 
-    private async cycleThroughPropertyContainer(targetPage: any, districtRegion: object, tempDistrictRegionLength: number, propertyURL: string, propertyLength: number, rentalPropertyWrapperLength: number) {
+    private async cycleThroughPropertyContainer(targetPage: any,tempClientDataLength: number, propertyURL: string, propertyLength: number, rentalPropertyWrapperLength: number) {
         let rentalPropertyRoomContainer: HTMLElement[];
         let rentalPropertyRoomContainerLength: number;
         let selectorRoomContainer: string = '*[class*=\"' + this.selectorList['property_room_container'] + '\"]';
@@ -201,13 +190,8 @@ class Padmapper extends CrawlTarget {
         rentalPropertyRoomContainerLength = rentalPropertyRoomContainer.length;
 
         while (rentalPropertyRoomContainerLength--) {
-            /*
-            await targetPage.evaluate((selectorRoomContainer, rentalPropertyRoomContainerLength) => {
-                return document.querySelectorAll(selectorRoomContainer)[rentalPropertyRoomContainerLength].children[1].children[0].children[0].children[0].children[0].innerText;
-            }, selectorRoomContainer, rentalPropertyRoomContainerLength);
-            */
             // store basic info and all amenities of each available suite
-            this.rentalData[districtRegion[tempDistrictRegionLength]][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer[rentalPropertyRoomContainerLength]));
+            this.rentalData[tempClientDataLength][propertyURL]['property'].push(await this.getRentalPropertyDataObject(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer[rentalPropertyRoomContainerLength]));
         }
     }
 

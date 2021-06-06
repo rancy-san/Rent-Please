@@ -36,35 +36,28 @@ export class Server {
                 // display IP address of the server
                 console.log("This machine '" + os.hostname() + "' is now a local server!");
                 console.log("Application ready.");
-                // console.log("Navigate to " + ipAddress + ":3000 in any modern web browser on mobile");
             });
         });
     }
 
     public async listenForClientGenerateReport() {
-        // POST method route
         await app.post('/generateReport', async (req, res) => {
             let clientData:object = req.body;
-            console.log(clientData);
-            
-            /*
-            await this.generateReport(res, clientData).then(()=>{
-                console.log(3);
-            });
-            */
+            await this.generateReport(res, clientData).then(()=>{});
         });
     }
 
     public async generateReport(res:any, clientData:object) {
-        return new Promise<void>(async (resolve, clientData) => await this.seekRental(resolve, clientData)).then(()=> {
+        let data:object = clientData;
+        return new Promise<void>(async (resolve, clientData) => await this.seekRental(resolve, data)).then(()=> {
             return new Promise<void>(async resolve => await this.rentPlease.createDistrictDataOutput(resolve, 'p'));
         });
     }
 
-    private async seekRental(resolve:any, clientData:object) {
+    private async seekRental(resolve:any, data:object) {
         this.rentPlease = await new RentPlease('p');
         // run web crawling
-        await this.rentPlease.seekRental(resolve, clientData);
+        await this.rentPlease.seekRental(resolve, data);
     }
 }
 

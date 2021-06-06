@@ -10,8 +10,10 @@ const puppeteer = require("puppeteer");
 const rentalConfig = require("../../json/rentalConfig.json");
 // web crawling configuration information
 const browserConfig = require("../../json/browserConfig.json");
+/*
 // list of regions to scan
 const districtList = require("../../json/district.json");
+*/
 
 
 class CrawlRental {
@@ -24,13 +26,15 @@ class CrawlRental {
     // rental data after crawling
     private rentalData: object;
     private resolve?:any;
+    private clientData?: object;
 
     constructor(arg:string) {
         this.target = arg;
         
     }
 
-    public async crawl(resolve?:any) {
+    public async crawl(resolve?:any, clientData?:object) {
+        this.clientData = clientData;
         (async () => {
             this.targetURL = await this.getTargetURL(this.target);
             this.browser = await puppeteer.launch({
@@ -42,7 +46,6 @@ class CrawlRental {
                     '--window-size=' + browserConfig["width"] + ',' + browserConfig["height"]
                 ]
             });
-
             await this.execTargetFunc(this.target);
             this.resolve = resolve;
         })();
@@ -71,14 +74,12 @@ class CrawlRental {
         let objectList:object = rentalConfig[this.target].object;
         let attributeList:object = rentalConfig[this.target].attribute;
         let selectorInnerDataList:object = rentalConfig[this.target].selector_inner_data;
-
-        let padmapper:any = new Padmapper(browser, targetURL, rentalType, districtList, selectorList, objectList, attributeList, selectorInnerDataList);
+        let padmapper:any = new Padmapper(browser, targetURL, rentalType, this.clientData, selectorList, attributeList, selectorInnerDataList);
         await padmapper.search();
         await padmapper.getRentalData()
         this.rentalData = await padmapper.getRentalData();
         await this.browser.close();
         await this.resolve();
-        //JSON.stringify(this.getRentalData(), null, 2);
     }
 
     public getRentalData():object {

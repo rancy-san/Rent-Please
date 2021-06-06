@@ -33,19 +33,14 @@ export class RentPlease {
      *                  set during initializtion of the CrawlRental object 
      *                  in the constructor.
      */
-    public async seekRental(resolve?:any) {
-        await this.crawlRental.crawl(resolve);
+    public async seekRental(resolve?:any, clientData?:object) {
+        await this.crawlRental.crawl(resolve, clientData);
         return;
     }
 
     public updateDistrictList() {
         this.districtScan = new DistrictScan();
         this.districtScan.searchByProvince();
-        //this.districtScan.searchPages("Neighbourhoods in Timmins");
-        /*
-        let redisDatabase:any = new RedisDatabase();
-        redisDatabase.rpushQueueData("testKey", "testData");
-        */
     }
 
     public async createDistrictDataOutput(resolve?:any, arg?:string) {
