@@ -215,6 +215,8 @@ class Padmapper extends CrawlTarget {
         //basicInformation['building_postal_code'] = await this.getPropertyPostalCode(targetPage, propertyLength);
         // store building type
         basicInformation['Property Type'] = await this.getPropertyBuildingType(targetPage);
+        // default rental cost when there is only 1 property available
+        basicInformation['Rental Cost ($CAD)'] = await this.getPropertyCostDefault(targetPage);
 
         // if not null, get data like usual
         if (rentalPropertyRoomContainer) {
@@ -291,15 +293,15 @@ class Padmapper extends CrawlTarget {
 
                 switch (iconContainerSVGText) {
                     case this.selectorInnerDataList['room_count_icon']: {
-                        basicInformation['bedroom_count'] = iconContainerText.replace(/[^0-9]/g, '');
+                        basicInformation['Bedroom Count'] = iconContainerText.replace(/[^0-9]/g, '');
                         break;
                     }
                     case this.selectorInnerDataList['bathroom_count_icon']: {
-                        basicInformation['bathroom_count'] = iconContainerText.replace(/[^0-9]/g, '');
+                        basicInformation['Bathroom Count'] = iconContainerText.replace(/[^0-9]/g, '');
                         break;
                     }
                     case this.selectorInnerDataList['floor_size_icon']: {
-                        basicInformation['floor'] = iconContainerText.replace(/[^0-9]/g, '');
+                        basicInformation['Floor (sqft)'] = iconContainerText.replace(/[^0-9]/g, '');
                         break;
                     }
                     case this.selectorInnerDataList['dogs1_allowed_icon']: {
@@ -422,16 +424,16 @@ class Padmapper extends CrawlTarget {
     }
 
     private async getPropertyURL(targetPage: any) {
-        let selector: string = '*[class*=\"' + this.selectorList['property_URL'] + '\"]';
-        await targetPage.waitForSelector(selector);
-        return await targetPage.evaluate((selector) => {
+        let selectorPropertyURL: string = '*[class*=\"' + this.selectorList['property_URL'] + '\"]';
+        await targetPage.waitForSelector(selectorPropertyURL, {timeout:500});
+        return await targetPage.evaluate((selectorPropertyURL) => {
             try {
-                let tempURL: string = document.querySelectorAll(selector)[0].children[0].href;
+                let tempURL: string = document.querySelectorAll(selectorPropertyURL)[0].children[0].href;
                 return tempURL.substring(0, tempURL.indexOf("#back="));
             } catch {
                 return "No Data";
             }
-        }, selector);
+        }, selectorPropertyURL);
     }
 
     private async getPropertyAttribute(targetPage: any, propertyLength: number, attributeValue: string) {
@@ -527,6 +529,20 @@ class Padmapper extends CrawlTarget {
                 return "No Data";
             else
                 return tempData;
+        } catch {
+            return "No Data";
+        }
+    }
+
+    private async getPropertyCostDefault(targetPage: any) {    
+        let selectorDefault: string = '*[class*=\"' + this.selectorList['property_cost_default'] + '\"]';
+
+        try {
+            let tempData: string = await targetPage.evaluate((selectorDefault) => {
+                return document.querySelectorAll(selectorDefault)[0].innerText;
+            }, selectorDefault);
+            tempData = tempData.replace("$", "").replace(",", "").trim();
+            return tempData;
         } catch {
             return "No Data";
         }
