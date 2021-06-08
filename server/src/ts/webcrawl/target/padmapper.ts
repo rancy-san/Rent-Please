@@ -198,8 +198,8 @@ class Padmapper extends CrawlTarget {
     private async getRentalPropertyDataObject(targetPage: any, propertyLength: number, rentalPropertyWrapperLength: number, rentalPropertyRoomContainer: HTMLElement) {
         let rentalProperty: object = {};
         rentalProperty['basic_information'] = await this.getPropertyDataBasicInformation(targetPage, propertyLength, rentalPropertyWrapperLength, rentalPropertyRoomContainer);
-        rentalProperty['apartment_amenities'] = await this.getPropertyDataApartmentAmenities(targetPage, propertyLength);
-        rentalProperty['building_amenities'] = await this.getPropertyDataBuildingAmenities(targetPage, propertyLength);
+        rentalProperty['In-Unit Amenity'] = await this.getPropertyDataApartmentAmenities(targetPage, propertyLength);
+        rentalProperty['Building Amenity'] = await this.getPropertyDataBuildingAmenities(targetPage, propertyLength);
 
         return rentalProperty;
     }
@@ -210,22 +210,22 @@ class Padmapper extends CrawlTarget {
         // property name
         basicInformation['building_name'] = await this.getPropertyName(targetPage, propertyLength);
         // property address
-        basicInformation['building_address'] = await this.getPropertyAddress(targetPage, propertyLength);
+        basicInformation['Address'] = await this.getPropertyAddress(targetPage, propertyLength) + " "  + await this.getPropertyPostalCode(targetPage, propertyLength);
         // building postal code
-        basicInformation['building_postal_code'] = await this.getPropertyPostalCode(targetPage, propertyLength);
+        //basicInformation['building_postal_code'] = await this.getPropertyPostalCode(targetPage, propertyLength);
         // store building type
-        basicInformation['building_type'] = await this.getPropertyBuildingType(targetPage);
+        basicInformation['Property Type'] = await this.getPropertyBuildingType(targetPage);
 
         // if not null, get data like usual
         if (rentalPropertyRoomContainer) {
             // rent price
-            basicInformation['rental_cost'] = await this.getPropertyCost(targetPage, rentalPropertyRoomContainer);
+            basicInformation['Rental Cost ($CAD)'] = await this.getPropertyCost(targetPage, rentalPropertyRoomContainer);
             // number of rooms
-            basicInformation['bedroom_count'] = await this.getPropertyRoomType(targetPage, rentalPropertyRoomContainer);
+            basicInformation['Bedroom Count'] = await this.getPropertyRoomType(targetPage, rentalPropertyRoomContainer);
             // size of suite
-            basicInformation['floor'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
+            basicInformation['Floor (sqft)'] = await this.getPropertySize(targetPage, rentalPropertyRoomContainer);
             // number of bathroom
-            basicInformation['bathroom_count'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
+            basicInformation['Bathroom Count'] = await this.getPropertyBathCount(targetPage, rentalPropertyRoomContainer);
         }
         basicInformation = await this.getPropertyIconInformationDefault(targetPage, basicInformation);
         basicInformation = await this.getPropertyTagInformationDefault(targetPage, basicInformation);
@@ -242,9 +242,9 @@ class Padmapper extends CrawlTarget {
 
         try {
             // default data unless otherwise indicated by the rental listing
-            basicInformation['lease_length'] = "Long";
-            basicInformation['dogs_allowed'] = "NO";
-            basicInformation['cats_allowed'] = "NO";
+            basicInformation['Lease Length'] = "Long";
+            basicInformation['Dogs Allowed'] = "NO";
+            basicInformation['Cats Allowed'] = "NO";
 
             await targetPage.waitForSelector(selectorTagContainer, { timeout: 500 });
 
@@ -255,15 +255,15 @@ class Padmapper extends CrawlTarget {
                 }, tempTagContainer);
 
                 // default inputs before obtainining data
-                if (!basicInformation['lease_length']) {
-                    if (tagContainerText == this.selectorInnerDataList['lease_length_tag']) {
-                        basicInformation['lease_length'] = "Short";
+                if (!basicInformation['Lease Length']) {
+                    if (tagContainerText == this.selectorInnerDataList['Lease Length_tag']) {
+                        basicInformation['Lease Length'] = "Short";
                     }
                 }
-                if (!basicInformation['dogs_allowed'] && !basicInformation['cats_allowed']) {
+                if (!basicInformation['Dogs Allowed'] && !basicInformation['Cats Allowed']) {
                     if (tagContainerText == this.selectorInnerDataList['pets_allowed_tag']) {
-                        basicInformation['dogs_allowed'] = "YES";
-                        basicInformation['cats_allowed'] = "YES";
+                        basicInformation['Dogs Allowed'] = "YES";
+                        basicInformation['Cats Allowed'] = "YES";
                     }
                 }
             }
@@ -304,17 +304,17 @@ class Padmapper extends CrawlTarget {
                     }
                     case this.selectorInnerDataList['dogs1_allowed_icon']: {
                         if (iconContainerText != "NO INFO")
-                            basicInformation['dogs_allowed'] = iconContainerText;
+                            basicInformation['Dogs Allowed'] = iconContainerText;
                         break;
                     }
                     case this.selectorInnerDataList['dogs2_allowed_icon']: {
                         if (iconContainerText != "NO INFO")
-                            basicInformation['dogs_allowed'] = iconContainerText;
+                            basicInformation['Dogs Allowed'] = iconContainerText;
                         break;
                     }
-                    case this.selectorInnerDataList['cats_allowed_icon']: {
+                    case this.selectorInnerDataList['Cats Allowed_icon']: {
                         if (iconContainerText != "NO INFO")
-                            basicInformation['cats_allowed'] = iconContainerText;
+                            basicInformation['Cats Allowed'] = iconContainerText;
                         break;
                     }
                 }
@@ -429,7 +429,7 @@ class Padmapper extends CrawlTarget {
                 let tempURL: string = document.querySelectorAll(selector)[0].children[0].href;
                 return tempURL.substring(0, tempURL.indexOf("#back="));
             } catch {
-                return "—";
+                return "No Data";
             }
         }, selector);
     }
@@ -448,7 +448,7 @@ class Padmapper extends CrawlTarget {
         try {
             return await this.getPropertyAttribute(targetPage, propertyLength, attributeValue);
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -457,7 +457,7 @@ class Padmapper extends CrawlTarget {
         try {
             return await this.getPropertyAttribute(targetPage, propertyLength, attributeValue);
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -466,7 +466,7 @@ class Padmapper extends CrawlTarget {
         try {
             return await this.getPropertyAttribute(targetPage, propertyLength, attributeValue);
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -489,12 +489,12 @@ class Padmapper extends CrawlTarget {
             }, rentalPropertyRoomContainer, selector);
 
             if (tempData === "")
-                return "—";
+                return "No Data";
             else
                 return tempData;
 
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -507,11 +507,11 @@ class Padmapper extends CrawlTarget {
             }, rentalPropertyRoomContainer, selector);
 
             if (tempData === "")
-                return "—";
+                return "No Data";
             else
                 return tempData;
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -524,11 +524,11 @@ class Padmapper extends CrawlTarget {
             }, rentalPropertyRoomContainer, selector);
 
             if (tempData === "")
-                return "—";
+                return "No Data";
             else
                 return tempData;
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
@@ -541,11 +541,11 @@ class Padmapper extends CrawlTarget {
             }, rentalPropertyRoomContainer, selector);
 
             if (tempData === "")
-                return "—";
+                return "No Data";
             else
                 return tempData;
         } catch {
-            return "—";
+            return "No Data";
         }
     }
 
