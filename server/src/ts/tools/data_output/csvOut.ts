@@ -107,7 +107,6 @@ class CSVOut {
                                         let cell: any = this.worksheet.getRow(dataRowNumber).getCell(referenceInformationValues[referenceInformationKeysLength]);
                                         if((inUnitAmenity[inUnitAmenityLength] + " " + inUnitAmenityTag) == referenceInformationKeys[referenceInformationKeysLength]) {
                                             cell.value = "YES";
-                                            break;
                                         } else if(cell.value === null && referenceInformationKeys[referenceInformationKeysLength].includes(inUnitAmenityTag)) {
                                             cell.value = "NO";
                                         }
