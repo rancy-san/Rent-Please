@@ -31,7 +31,6 @@ class CSVOut {
             this.XLSXFormatOrder[this.XLSXFormat[XLSXFormatLength]] = XLSXFormatLength + 1;
             this.worksheet.getRow(this.headerRowNumber).getCell((XLSXFormatLength + 1)).value = this.XLSXFormat[XLSXFormatLength];
         }
-        //console.log(this.XLSXFormatOrder);
     }
 
     public async appendDataToXLSX() {
@@ -39,10 +38,12 @@ class CSVOut {
         let dataRowNumber = this.headerRowNumber + 2;
         // cycle through top level indexing
         while(indexDataLength--) {
+            // district name
             let districtName:string = Object.keys(this.districtData[indexDataLength])[0];
             // length - 1 ignores the district name
             let districtURLLength:number = Object.keys(this.districtData[indexDataLength]).length - 1;
             let districtDataLength:number = this.getDataLength(this.districtData[indexDataLength]);
+
 
             // cycle through URLs where property information is store
             while(districtURLLength--) {
@@ -60,6 +61,8 @@ class CSVOut {
                     let propertyInformationValues: string[] = Object.values(property[propertyLength]);
                     // cycle through property information
                     while (propertyInformationKeysLength--) {
+                        // append district name to the spreadsheet
+                        this.worksheet.getRow(dataRowNumber).getCell(1).value = districtName;
                         switch(propertyInformationKeys[propertyInformationKeysLength]) {
                             case "basic_information": {
                                 // get the basic_information names of the property in the JSON object
@@ -94,6 +97,10 @@ class CSVOut {
                                 let referenceInformationValues:number[] = Object.values(await this.getXLSXFormatOrder()) as unknown as number[];
                                 let inUnitAmenityTag: string = "(In-Unit Amenity)"
 
+                                if(inUnitAmenityLength === 0) {
+                                    inUnitAmenityLength = 1;
+                                }
+                                
                                 while(inUnitAmenityLength--) {
                                     let referenceInformationKeysLength:number = referenceInformationKeys.length;
                                     while(referenceInformationKeysLength--) {
@@ -103,7 +110,7 @@ class CSVOut {
                                             break;
                                         } else if(cell.value === null && referenceInformationKeys[referenceInformationKeysLength].includes(inUnitAmenityTag)) {
                                             cell.value = "NO";
-                                        } 
+                                        }
                                     }
                                 }
                                 break;
@@ -115,14 +122,17 @@ class CSVOut {
                                 let referenceInformationKeys:string[] = Object.keys(await this.getXLSXFormatOrder());
                                 let referenceInformationValues:number[] = Object.values(await this.getXLSXFormatOrder()) as unknown as number[];
                                 let buildingAmenityTag: string = "(Building Amenity)"
-
+                                
+                                if(buildingAmenityLength === 0) {
+                                    buildingAmenityLength = 1;
+                                }
+                                
                                 while(buildingAmenityLength--) {
                                     let referenceInformationKeysLength:number = referenceInformationKeys.length;
                                     while(referenceInformationKeysLength--) {
                                         let cell: any = this.worksheet.getRow(dataRowNumber).getCell(referenceInformationValues[referenceInformationKeysLength]);
                                         if((buildingAmenity[buildingAmenityLength] + " " + buildingAmenityTag) == referenceInformationKeys[referenceInformationKeysLength]) {
                                             cell.value = "YES";
-                                            break;
                                         } else if(cell.value === null && referenceInformationKeys[referenceInformationKeysLength].includes(buildingAmenityTag)) {
                                             cell.value = "NO";
                                         } 
