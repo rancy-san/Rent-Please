@@ -57,7 +57,8 @@ export class Server {
     private async seekRental(resolve:any, data:object) {
         this.rentPlease = await new RentPlease('p');
         // run web crawling
-        await this.rentPlease.seekRental(resolve, data);
+        resolve(); // remove this when output data done
+        //await this.rentPlease.seekRental(resolve, data);
     }
 }
 
