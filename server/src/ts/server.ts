@@ -10,8 +10,6 @@ const http = require('http').Server(app);
 const os = require('os');
 // eliminate CORS (Cross origin request) issue/non-https
 const cors = require('cors');
-// import library that gets server's IPv4 address
-const localIpV4Address = require("local-ipv4-address");
 // fetch class RentPlease for later instantiation
 const RentPlease = require('./rentPlease');
 
@@ -32,12 +30,9 @@ export class Server {
     public startServer() {
         // create server & listen for connections
         http.listen(3000, function () {
-            // get IPv4 address to display in the server console
-            localIpV4Address().then(function (ipAddress) {
-                // display IP address of the server
-                console.log("This machine '" + os.hostname() + "' is now a local server!");
-                console.log("Application ready.");
-            });
+            // display IP address of the server
+            console.log("This machine '" + os.hostname() + "' is now a local server!");
+            console.log("Application ready."); 
         });
     }
 
