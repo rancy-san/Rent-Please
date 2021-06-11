@@ -5,11 +5,9 @@
     "express": "^4.17.1",
     "http": "0.0.1-security",
     "local-ipv4-address": "0.0.2",
-    "node-wikipedia": "^0.0.2",
     "nodemon": "^2.0.7",
     "os": "^0.1.1",
     "puppeteer": "^9.1.1",
-    "redis": "^3.0.2",
     "tsc": "^1.20150623.0"
   },
   "devDependencies": {

@@ -8,7 +8,6 @@
 
 // Web crawling class
 const CrawlRental = require('./webcrawl/crawlRental');
-const DistrictScan = require('./tools/wiki_scan/districtScan');
 const CSVOut = require('./tools/data_output/csvOut');
 
 export class RentPlease {
@@ -37,11 +36,6 @@ export class RentPlease {
     public async seekRental(resolve?:any, clientData?:object) {
         await this.crawlRental.crawl(resolve, clientData);
         return;
-    }
-
-    public updateDistrictList() {
-        this.districtScan = new DistrictScan();
-        this.districtScan.searchByProvince();
     }
 
     public async createDistrictDataOutput(resolve?:any, arg?:string) {        

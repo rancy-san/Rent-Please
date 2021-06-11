@@ -45,24 +45,6 @@ class Main {
             let arg:string = this.args[2].toLowerCase().replace('-', '');
             // filter only valid argument is entered
             switch (arg) {
-                // any previous case will not have "break; 
-                case "p": {
-                    // begin the Rent, Please! application through instantiating the class
-                    //let rentPlease:any = new RentPlease(arg);
-                    // run web crawling
-                    /*
-                    await rentPlease.seekRental();
-                    await rentPlease.createDistrictDataOutput();
-                    */
-                    break;
-                }
-                // update list of neighbourhoods
-                case "u": {
-                    //let rentPlease:any = new RentPlease();
-                    // start collecting available neighbourhood data
-                    //rentPlease.updateDistrictList();
-                    break;
-                }
                 case "start": {
                     let server: any = new Server();
                     server.listenForClientGenerateReport();
