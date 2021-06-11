@@ -69,6 +69,7 @@ class CrawlRental {
         // get Class for padmapper web crawling
         const Padmapper = require('./target/padmapper');
 
+        process.stdout.write("Opening crawler.                          \r\033[0G");
         let rentalType:object = rentalConfig[this.target].rental_type;
         let selectorList:object = rentalConfig[this.target].selector;
         let objectList:object = rentalConfig[this.target].object;
@@ -78,6 +79,7 @@ class CrawlRental {
         await padmapper.search();
         await padmapper.getRentalData()
         this.rentalData = await padmapper.getRentalData();
+        process.stdout.write("Closing crawler.                                                                  \r\033[0G");
         await this.browser.close();
         await this.resolve();
     }
