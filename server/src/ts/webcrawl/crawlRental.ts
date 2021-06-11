@@ -38,7 +38,7 @@ class CrawlRental {
         (async () => {
             this.targetURL = await this.getTargetURL(this.target);
             this.browser = await puppeteer.launch({
-                headless: browserConfig["headless"],
+                headless: true,//browserConfig["headless"],
                 defaultViewport: null,
                 args: [
                     //'--start-maximized',
@@ -76,10 +76,14 @@ class CrawlRental {
         let attributeList:object = rentalConfig[this.target].attribute;
         let selectorInnerDataList:object = rentalConfig[this.target].selector_inner_data;
         let padmapper:any = new Padmapper(browser, targetURL, rentalType, this.clientData, selectorList, attributeList, selectorInnerDataList);
+        
+        process.stdout.write("Searching for rental data.                          \r\033[0G");
         await padmapper.search();
+        
+        process.stdout.write("Obtaining rental data.                          \r\033[0G");
         await padmapper.getRentalData()
         this.rentalData = await padmapper.getRentalData();
-        process.stdout.write("Closing crawler.                                                                  \r\033[0G");
+        process.stdout.write("Completing data collection.                                                                  \r\033[0G");
         await this.browser.close();
         await this.resolve();
     }
