@@ -93,6 +93,21 @@ class SearchListUX extends SearchUX {
      */
     public removeFromPrepareData(elementResult:HTMLElement): void {
         elementResult.remove();
+        this.checkListLength();
+    }
+
+    private checkListLength() {
+        let generateReportButtonContainer: HTMLElement = document.getElementById("generateReportButtonContainer") as HTMLElement;
+
+        if(this.getListLength() === 0) {
+            (document.getElementById("generateReportButtonContainer") as HTMLElement).style.display = "none";
+        } else {
+            (document.getElementById("generateReportButtonContainer") as HTMLElement).style.display = "block";
+        }
+    }
+
+    private getListLength():number {
+        return (document.getElementById("prepareWrapper") as HTMLElement).children.length;
     }
 
     /**
@@ -133,7 +148,8 @@ class SearchListUX extends SearchUX {
         
         // get bounding box after lonlat update
         elementResult.setAttribute("data-boundingBox", this.getBoundingBox().toString());
-
+        // show generate document
+        this.checkListLength();
         // clear list
         this.clearList(listElementResults);
     }
@@ -254,6 +270,15 @@ class SearchListUX extends SearchUX {
         inactiveTab.style.opacity = "1";
 
         inactiveList.style.display = "block";
+        
+        if(inactiveTab.innerText == "Prepare Data") {
+            if((document.getElementById("prepareWrapper") as HTMLElement).children.length > 0)
+                (document.getElementById("generateReportButtonWrapper") as HTMLElement).style.display = "block";
+        }
+            
+        else if(inactiveTab.innerText == "Search Results")
+            (document.getElementById("generateReportButtonWrapper") as HTMLElement).style.display = "none";
+       
     }
 
     /**
@@ -272,6 +297,8 @@ class SearchListUX extends SearchUX {
         activeTab.style.opacity = "0.45";
 
         activeList.style.display = "none";
+
+        
     }
 
     private getCenter() {
