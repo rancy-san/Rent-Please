@@ -106,8 +106,13 @@ Example of the 'Add' button and clicking on it to be part of generating a docume
 <br>
 
 ![Add button for Saanich](https://user-images.githubusercontent.com/70251413/121717940-9ba32e80-ca96-11eb-92fd-74e9340602b2.png)
+<br>
+
 ![Add button for Esquimalt](https://user-images.githubusercontent.com/70251413/121719333-b924c800-ca97-11eb-8621-baccccc1cd69.png)
+<br>
+
 ![Add button for Victoria Downtown](https://user-images.githubusercontent.com/70251413/121717942-9c3bc500-ca96-11eb-9c25-5081412e86cd.png)
+<br>
 
 To view the list of added locations, click on the 'Prepare Data' tab.
 <br>
