@@ -26,7 +26,7 @@ window.onload = function () {
     let latitude: number = 48.428333;
     // instantiate the Mapping object to being working with the map
     let map: Mapping = new Mapping(longitude, latitude);
-    let generateReportButton:HTMLElement = document.getElementById('generateReportButtonWrapper') as HTMLElement;
+    let generateReportButton:HTMLElement = document.getElementById('generateReportButtonContainer') as HTMLElement;
 
     // create the Openlayers map
     map.createMap();
