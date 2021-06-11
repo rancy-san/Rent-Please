@@ -157,6 +157,8 @@ Example of changing the filetype to CSV:
 ![Changing the extension to CSV](https://user-images.githubusercontent.com/70251413/121723894-f68b5480-ca9b-11eb-8b64-815be0b9f370.PNG)
 
 The CSV file is laid out in plain view and can analyzed using formulas to analytically or visually represent the data over time with multiple CSV files. The CSV dataset can also be used along side with data science programs to perform k-Nearest Neighbors (k-NN), decision trees, etc. to determine patterns within the dataset.
+<br>
+
 Example of the CSV file generated using the previous steps above:
 <br>
 
