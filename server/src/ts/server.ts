@@ -1,3 +1,4 @@
+import { JSONObject } from "puppeteer";
 
 // import expressJS
 const express = require('express');
@@ -42,13 +43,22 @@ export class Server {
 
     public async listenForClientGenerateReport() {
         await app.post('/generateReport', async (req, res) => {
+            process.stdout.write("Received request to generate a report.                          \r");
             let clientData:object = req.body;
-            await this.generateReport(res, clientData).then(()=>{});
+            await this.generateReport(res, clientData).then(async ()=>{
+                
+                process.stdout.write("Sending filename to client.                          \r");
+                let filename: string = await this.rentPlease.getFilename();
+                let filpath: string =  __dirname;
+                await res.send(filpath + filename);
+                process.stdout.write("Reply sent to client.                                               \r");
+            });
         });
     }
 
     public async generateReport(res:any, clientData:object) {
         let data:object = clientData;
+        let response:any = res;
         return new Promise<void>(async (resolve, clientData) => await this.seekRental(resolve, data)).then(()=> {
             return new Promise<void>(async resolve => await this.rentPlease.createDistrictDataOutput(resolve, 'p'));
         });
