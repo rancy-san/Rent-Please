@@ -51,6 +51,8 @@ Example: `node main start`
 After performing the 'Setup' phase above, in a CLI navigate to the **/server/src/ts** folder run:  `node main start`
 <br>
 Example of server running: 
+<br>
+
 ![Server side startup](https://user-images.githubusercontent.com/70251413/121634359-3ec55b00-ca39-11eb-816f-3b16cedbd4e9.png)
 
 <br>
@@ -59,6 +61,8 @@ Example of server running:
 Open 'districtSelection.html' within a web browser such as Google Chrome, Firefox, Microsoft Edge, etc.
 <br>
 Example of application startup defaulted to Victoria:
+<br>
+
 ![Client side startup default view](https://user-images.githubusercontent.com/70251413/121703748-fe40fe00-ca87-11eb-8860-45bdb04418d8.PNG)
 <br>
 
@@ -66,6 +70,8 @@ Example of application startup defaulted to Victoria:
 Search for a custom location by dragging the map around.  Dragging the map around will change the value of the longitude and latitude to match the current map's location. Updates to the longitude and latitude values are reflected both on the map and on the "Custom District" item.
 <br>
 Example of dragging around the map and renaming the location name to Esquimalt:
+<br>
+
 ![Dragged custom location, and renamed custom location](https://user-images.githubusercontent.com/70251413/121708120-17e44480-ca8c-11eb-91a2-2655ae0204f5.PNG)
 
 #### Searching for a known location
@@ -73,16 +79,22 @@ Another way of searching for a location is by typing the name of the location in
 <br>
 
 Example of searching for Vancouver:
+<br>
+
 ![List of locations using "Vancouver" as the search term](https://user-images.githubusercontent.com/70251413/121709461-6e05b780-ca8d-11eb-9041-8e259ebc8847.PNG)
 
 To pan the map on one of the known locations, click on the geolocate button.
 <br>
 
 Example of the 'Geolocate' button for a known location:
+<br>
+
 ![Geolocate button for a known location](https://user-images.githubusercontent.com/70251413/121710142-229fd900-ca8e-11eb-869f-21e068ff0242.PNG)
 <br>
 
 Example of the map panned to the known location:
+<br>
+
 ![Example of known location for Vancouver through the search bar](https://user-images.githubusercontent.com/70251413/121713356-9f808200-ca91-11eb-9b96-0b380a189db0.PNG)
 <br>
 
@@ -91,10 +103,17 @@ After searching for a custom or known location, click on the add button.
 <br>
 
 Example of the 'Add' button and clicking on it to be part of generating a document:
+<br>
+
 ![Add button for Saanich](https://user-images.githubusercontent.com/70251413/121717940-9ba32e80-ca96-11eb-92fd-74e9340602b2.png)
 ![Add button for Esquimalt](https://user-images.githubusercontent.com/70251413/121719333-b924c800-ca97-11eb-8621-baccccc1cd69.png)
 ![Add button for Victoria Downtown](https://user-images.githubusercontent.com/70251413/121717942-9c3bc500-ca96-11eb-9c25-5081412e86cd.png)
-To view the list of added locations, click on the 'Prepare Data' tab
+
+To view the list of added locations, click on the 'Prepare Data' tab.
+<br>
+Example of the 'Prepare Data' list:
+<br>
+
 ![List of locations in the Prepare Data list](https://user-images.githubusercontent.com/70251413/121716971-8974c080-ca95-11eb-88fb-ed92bd7537fe.PNG)
 <br>
 
@@ -103,6 +122,8 @@ To remove a location from the 'Prepare Data' list, click on the remove button.
 <br>
 
 Example of the 'Remove' icon:
+<br>
+
 ![Remove button](https://user-images.githubusercontent.com/70251413/121718800-8c70b080-ca97-11eb-82ad-4dbc949d22cd.png)
 <br>
 
@@ -129,6 +150,8 @@ Example of the XLS report downloaded after the server has completed the request:
 ![Downloaded Report in XLS format](https://user-images.githubusercontent.com/70251413/121723892-f5f2be00-ca9b-11eb-9231-2b4059f0a5fe.PNG)
 
 If the above is the case, update/rename the file format of the XLS to a CSV manually.
+<br>
+Example of changing the filetype to CSV:
 <br>
 
 ![Changing the extension to CSV](https://user-images.githubusercontent.com/70251413/121723894-f68b5480-ca9b-11eb-8b64-815be0b9f370.PNG)
