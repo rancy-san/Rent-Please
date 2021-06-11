@@ -297,6 +297,10 @@ input:focus {
     border-bottom: 1px solid lightgray;
 }
 
+.resultContainer:last-child {
+    border-bottom: 50px solid rgba(255,255,255,0);
+}
+
 .resultContainer:hover {
     background-color: #FAFAFA;
 }
