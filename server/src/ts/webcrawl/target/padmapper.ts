@@ -293,6 +293,7 @@ class Padmapper extends CrawlTarget {
 
                 switch (iconContainerSVGText) {
                     case this.selectorInnerDataList['room_count_icon']: {
+                        if(iconContainerText.toLowerCase() != "studio")
                         basicInformation['Bedroom Count'] = iconContainerText.replace(/[^0-9]/g, '');
                         break;
                     }
