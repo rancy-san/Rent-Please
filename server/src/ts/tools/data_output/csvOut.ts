@@ -11,6 +11,7 @@ class CSVOut {
     private date: Date;
     private headerRowNumber: number;
     private districtData:object;
+    private fileName: string;
 
     constructor()
     constructor(districtData:object)
@@ -156,11 +157,21 @@ class CSVOut {
     }
 
     public async saveXLSX() {
-        //let randomNumber:number = (Math.floor(Math.random() * 100000) + 100000);
+        let randomNumber:number = (Math.floor(Math.random() * 100000) + 100000);
         let filePath:string = "./tools/data_output/data/";
         let fileType:string = ".csv";
-        let fileName: string = "Rent, Please! " + this.date.toISOString().slice(0,10) + " " + (this.date.getHours() + "꞉" + this.date.getMinutes() + "꞉" + this.date.getSeconds());// + " " + randomNumber;
-        await this.workbook.csv.writeFile(filePath + fileName + fileType);
+        let fileName: string = "Rent, Please! " + this.date.toISOString().slice(0,10) + " " + (this.date.getHours() + "꞉" + this.date.getMinutes() + "꞉" + this.date.getSeconds()) + " " + randomNumber;
+
+        await this.setDataFileName(filePath, fileName, fileType);
+        await this.workbook.csv.writeFile(await this.getDataFilename());
+    }
+
+    public async setDataFileName(filePath:string, fileName:string, fileType:string,) {
+        this.fileName = filePath + fileName + fileType;
+    }
+
+    public async getDataFilename():Promise<string> {
+        return this.fileName;
     }
 }
 
