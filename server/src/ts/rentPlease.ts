@@ -15,6 +15,7 @@ export class RentPlease {
     // holds the crawlRental class to webcrawl rental web applications
     private crawlRental: any;
     private districtScan: any;
+    private dataFilename: string;
 
     constructor()
     constructor(arg: string)
@@ -46,15 +47,24 @@ export class RentPlease {
     public async createDistrictDataOutput(resolve?:any, arg?:string) {        
         let csvOut: typeof CSVOut;
         let districtData: object;
-        districtData = await this.crawlRental.getRentalData();
         
+        districtData = await this.crawlRental.getRentalData();
         csvOut = await new CSVOut(districtData, arg);
         await csvOut.appendDataToXLSX();
         await csvOut.saveXLSX();
-        
-        
+        await this.setDataFilename(csvOut.getDataFilename());
         resolve();
     }
+
+    public async setDataFilename(dataFilename:string) {
+        this.dataFilename = dataFilename;
+    }
+
+    public async getFilename():Promise<string> {
+        return this.dataFilename;
+    }
+
+
 }
 
 module.exports = RentPlease;
