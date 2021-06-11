@@ -7,6 +7,18 @@
 
 <body>
     <div id="districtSelection">
+        <div id="appOverlayContainer">
+            <div id="appOverlayText">The server is generating a CSV report <br> Please wait</div>
+            <div class="spaceObject" id="spacePlanet1Container">
+                <div id="spacePlanet1BG"></div>
+                <div id="spacePlanet1BodyContainer">
+                    <div class="spacePlanet1Gas"></div>
+                    <div class="spacePlanet1Gas"></div>
+                    <div id="spacePlanet1Land"></div>
+                    <div id="spacePlanet1Penumbra"></div>
+                </div>
+            </div>
+        </div>
         <div id="searchContainer">
             <div id=searchFieldContainer>
                 <div id="searchIcon"></div>
@@ -20,9 +32,10 @@
             <div id="resultWrapper"></div>
             <div id="prepareWrapper"></div>
             <div id="generateReportButtonWrapper">
+                <a id="generateReportButtonLink" href="" type="text/csv" target="_blank"> </a>
                 <div id="generateReportButtonContainer">
                     <div id="generateReportButtonIcon"></div>
-                    <div id="generateReportButtonText">Generate Report</div>
+                    <!--<div id="generateReportButtonText">Generate Report</div> -->
                 </div>
             </div>
 
@@ -52,5 +65,6 @@
     <script type="text/javascript" src="./js/map.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 </body>
+
 
 </html>
